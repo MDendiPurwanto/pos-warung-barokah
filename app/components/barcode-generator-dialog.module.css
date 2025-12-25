@@ -1,0 +1,127 @@
+.dialog {
+  max-width: 500px;
+  width: 95vw;
+}
+
+@media (min-width: 640px) {
+  .dialog {
+    width: 100%;
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-accent-9);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+}
+
+.inputGroup {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.inputGroup input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inputGroup button {
+  flex-shrink: 0;
+}
+
+.buttonText {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .buttonText {
+    display: inline;
+    margin-left: var(--space-2);
+  }
+}
+
+@media (max-width: 420px) {
+  .inputGroup {
+    flex-direction: column;
+  }
+  
+  .inputGroup input {
+    width: 100%;
+  }
+}
+
+.barcodePreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-neutral-1);
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-3);
+  min-height: 120px;
+  overflow-x: auto;
+}
+
+.barcodePreview canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .barcodePreview {
+    padding: var(--space-3);
+  }
+}
+
+.hint {
+  font: var(--font-caption);
+  color: var(--color-neutral-10);
+  text-align: center;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.footerRight {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .footerRight {
+    width: 100%;
+  }
+  
+  .footerRight button {
+    flex: 1;
+  }
+}

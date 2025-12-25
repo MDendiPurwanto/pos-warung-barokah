@@ -1,0 +1,33 @@
+.dialog {
+  max-width: 600px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-accent-9);
+}
+
+.scannerWrapper {
+  margin: var(--space-4) 0;
+}
+
+.scanner {
+  width: 100%;
+  border-radius: var(--radius-3);
+  overflow: hidden;
+  background: var(--color-neutral-2);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

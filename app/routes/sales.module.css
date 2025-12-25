@@ -1,0 +1,585 @@
+.container {
+  min-height: 100vh;
+  background: var(--color-neutral-2);
+}
+
+.header {
+  background: var(--color-neutral-1);
+  border-bottom: 1px solid var(--color-neutral-6);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-1);
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-2);
+  color: var(--color-neutral-11);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  text-decoration: none;
+  font: var(--font-body);
+}
+
+.backButton:hover {
+  background: var(--color-neutral-3);
+  border-color: var(--color-neutral-7);
+}
+
+.title {
+  font: var(--font-heading);
+  color: var(--color-neutral-12);
+  margin: 0;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.searchSection {
+  background: var(--color-neutral-1);
+  border-radius: var(--radius-4);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-2);
+}
+
+.searchHeader {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.searchInput {
+  flex: 1;
+}
+
+.scanButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.scanIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-3);
+}
+
+.productCard {
+  background: var(--color-neutral-1);
+  border: 2px solid var(--color-neutral-5);
+  border-radius: var(--radius-3);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.productCard:hover {
+  border-color: var(--color-accent-9);
+  box-shadow: var(--shadow-2);
+  transform: translateY(-2px);
+}
+
+.productName {
+  font: var(--font-subheading);
+  font-size: var(--font-size-1);
+  color: var(--color-neutral-12);
+  margin: 0;
+}
+
+.productPrice {
+  font: var(--font-body);
+  font-weight: 600;
+  color: var(--color-brand-11);
+  margin: 0;
+}
+
+.productStock {
+  font: var(--font-caption);
+  color: var(--color-neutral-10);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.stockIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.rightPanel {
+  position: sticky;
+  top: var(--space-6);
+}
+
+.cartSection {
+  background: var(--color-neutral-1);
+  border-radius: var(--radius-4);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+}
+
+.cartHeader {
+  background: linear-gradient(135deg, var(--color-brand-9), var(--color-brand-10));
+  color: var(--color-brand-contrast);
+  padding: var(--space-4);
+}
+
+.cartTitle {
+  font: var(--font-heading);
+  font-size: var(--font-size-3);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cartIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.cartContent {
+  padding: var(--space-4);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.emptyCart {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-neutral-10);
+}
+
+.emptyCartIcon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-3);
+  opacity: 0.5;
+}
+
+.cartItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cartItem {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-neutral-2);
+  border-radius: var(--radius-3);
+}
+
+.cartItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cartItemName {
+  font: var(--font-body);
+  font-weight: 600;
+  color: var(--color-neutral-12);
+  margin: 0 0 var(--space-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartItemPrice {
+  font: var(--font-caption);
+  color: var(--color-neutral-11);
+  margin: 0;
+}
+
+.cartItemControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.quantityButton {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-neutral-1);
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  color: var(--color-neutral-11);
+}
+
+.quantityButton:hover {
+  background: var(--color-neutral-3);
+  border-color: var(--color-neutral-7);
+}
+
+.quantityButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantityIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.quantity {
+  font: var(--font-body);
+  font-weight: 600;
+  color: var(--color-neutral-12);
+  min-width: 24px;
+  text-align: center;
+}
+
+.removeButton {
+  padding: var(--space-1);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-error-9);
+  transition: all 0.2s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover {
+  background: var(--color-error-3);
+  border-radius: var(--radius-2);
+}
+
+.removeIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.cartFooter {
+  border-top: 1px solid var(--color-neutral-6);
+  padding: var(--space-4);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.totalLabel {
+  font: var(--font-subheading);
+  color: var(--color-neutral-11);
+  margin: 0;
+}
+
+.totalAmount {
+  font: var(--font-heading);
+  color: var(--color-neutral-12);
+  margin: 0;
+}
+
+.paymentSection {
+  background: var(--color-neutral-2);
+  border-radius: var(--radius-3);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.paymentLabel {
+  display: block;
+  font: var(--font-body);
+  font-weight: 600;
+  color: var(--color-neutral-11);
+  margin-bottom: var(--space-2);
+}
+
+.paymentInputWrapper {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.paymentInput {
+  flex: 1;
+  font-size: var(--font-size-3);
+  font-weight: 600;
+  text-align: right;
+}
+
+.exactButton {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-neutral-1);
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-2);
+  color: var(--color-neutral-11);
+  font: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  white-space: nowrap;
+}
+
+.exactButton:hover {
+  background: var(--color-neutral-3);
+  border-color: var(--color-neutral-7);
+}
+
+.exactButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quickAmounts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.quickAmountButton {
+  padding: var(--space-2);
+  background: var(--color-neutral-1);
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-2);
+  color: var(--color-neutral-11);
+  font: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.quickAmountButton:hover {
+  background: var(--color-accent-3);
+  border-color: var(--color-accent-7);
+  color: var(--color-accent-11);
+}
+
+.changeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--color-neutral-1);
+  border-radius: var(--radius-2);
+  border: 1px solid var(--color-neutral-5);
+}
+
+.changeLabel {
+  font: var(--font-body);
+  font-weight: 600;
+  color: var(--color-neutral-11);
+}
+
+.changeAmount {
+  font: var(--font-heading);
+  font-size: var(--font-size-4);
+  font-weight: 700;
+}
+
+.changePositive {
+  color: var(--color-success-11);
+}
+
+.changeNegative {
+  color: var(--color-error-11);
+}
+
+.cartActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.completeButton {
+  background: linear-gradient(135deg, var(--color-accent-9), var(--color-accent-10));
+  color: var(--color-accent-contrast);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.completeButton:hover {
+  background: linear-gradient(135deg, var(--color-accent-10), var(--color-accent-11));
+}
+
+.payOnlyButton {
+  background: var(--color-neutral-1);
+  color: var(--color-neutral-11);
+  border: 1px solid var(--color-neutral-6);
+  font-weight: 600;
+}
+
+.payOnlyButton:hover {
+  background: var(--color-neutral-3);
+}
+
+.cancelButton {
+  background: transparent;
+  color: var(--color-neutral-11);
+  border: 1px solid var(--color-neutral-6);
+}
+
+.cancelButton:hover {
+  background: var(--color-neutral-3);
+}
+
+.actionIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.scannerDialog {
+  max-width: 500px;
+}
+
+.scannerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: var(--color-neutral-2);
+  border-radius: var(--radius-3);
+  overflow: hidden;
+  margin: var(--space-4) 0;
+}
+
+.scannerWrapper video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+
+  .rightPanel {
+    position: static;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .searchHeader {
+    flex-direction: column;
+  }
+
+  .scanButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quickAmounts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quickAmountButton {
+    padding: var(--space-2);
+    font-size: var(--font-size-0);
+  }
+
+  .cartActions {
+    gap: var(--space-2);
+  }
+
+  .completeButton,
+  .payOnlyButton,
+  .cancelButton {
+    padding: var(--space-3);
+    font-size: var(--font-size-1);
+  }
+
+  .paymentInputWrapper {
+    flex-direction: row;
+  }
+
+  .exactButton {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-0);
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: var(--space-3);
+  }
+
+  .main {
+    padding: var(--space-3);
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .productCard {
+    padding: var(--space-3);
+  }
+
+  .cartContent {
+    padding: var(--space-3);
+  }
+
+  .cartFooter {
+    padding: var(--space-3);
+  }
+
+  .quickAmounts {
+    grid-template-columns: 1fr;
+  }
+}

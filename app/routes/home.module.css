@@ -1,0 +1,194 @@
+.container {
+  min-height: 100vh;
+  background: var(--color-neutral-2);
+}
+
+.header {
+  background: var(--color-accent-9);
+  padding: var(--space-6) var(--space-5);
+  box-shadow: var(--shadow-3);
+  border-bottom: var(--border-size-1) solid var(--color-accent-10);
+}
+
+.headerContent {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.titleWrapper {
+  flex: 1;
+  text-align: left;
+  margin-left: var(--space-3);
+}
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  color: var(--color-accent-contrast);
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.title {
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-7);
+  color: var(--color-accent-contrast);
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+  font-size: var(--font-size-2);
+  color: var(--color-accent-contrast);
+  margin: 0;
+  opacity: 0.9;
+  font-weight: var(--font-weight-5);
+}
+
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5);
+}
+
+.navigationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-5);
+}
+
+.navCard {
+  background: var(--color-neutral-1);
+  border-radius: var(--radius-4);
+  padding: var(--space-7) var(--space-5);
+  box-shadow: var(--shadow-2);
+  transition: all 0.2s var(--ease-out);
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  border: var(--border-size-2) solid var(--color-neutral-6);
+  min-height: 160px;
+  width: 100%;
+}
+
+.navCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-4);
+  border-color: var(--color-accent-8);
+  background: var(--color-accent-2);
+}
+
+.navCard:active {
+  transform: translateY(-2px);
+}
+
+.navCardIconWrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-round);
+  background: var(--color-accent-9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-3);
+  border: var(--border-size-1) solid var(--color-accent-10);
+  flex-shrink: 0;
+}
+
+.navCardIcon {
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent-contrast);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  flex-shrink: 0;
+}
+
+.navCardTitle {
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-6);
+  color: var(--color-neutral-12);
+  margin: 0;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .navigationGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .headerContent {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .titleWrapper {
+    margin-left: 0;
+    text-align: center;
+    flex: 0 0 100%;
+    order: 2;
+  }
+
+  .toggleWrapper {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+  }
+
+  .logo {
+    order: 1;
+    width: 48px;
+    height: 48px;
+  }
+
+  .title {
+    font-size: var(--font-size-5);
+  }
+
+  .navCard {
+    min-height: 140px;
+    padding: var(--space-6) var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .navCardIconWrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .navCardIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .navCardTitle {
+    font-size: var(--font-size-3);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .navigationGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

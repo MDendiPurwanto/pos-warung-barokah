@@ -1,0 +1,200 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-neutral-2);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-accent-9);
+  color: var(--color-accent-contrast);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.printButton {
+  gap: var(--space-2);
+}
+
+.content {
+  padding: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.notFound {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-neutral-10);
+}
+
+.infoCard {
+  background: linear-gradient(135deg, var(--color-accent-3) 0%, var(--color-accent-2) 100%);
+}
+
+.transactionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.receiptIcon {
+  color: var(--color-accent-9);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.transactionId {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  margin-bottom: var(--space-2);
+  color: var(--color-neutral-12);
+}
+
+.transactionDate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-neutral-11);
+}
+
+.itemsCard {
+  margin-top: var(--space-2);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.productName {
+  font-weight: 500;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.centerAlign {
+  text-align: center;
+}
+
+.summaryCard {
+  background-color: var(--color-neutral-1);
+  border: 2px solid var(--color-accent-6);
+}
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+
+.summaryLabel {
+  font-size: 1rem;
+  color: var(--color-neutral-11);
+}
+
+.summaryValue {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-neutral-12);
+}
+
+.changeRow {
+  border-top: 2px solid var(--color-accent-6);
+  padding-top: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.changeValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-success-9);
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .transactionId {
+    font-size: 1.125rem;
+  }
+  
+  .summaryValue {
+    font-size: 1rem;
+  }
+  
+  .changeValue {
+    font-size: 1.25rem;
+  }
+  
+  .tableWrapper {
+    font-size: 0.875rem;
+  }
+
+  .header {
+    padding: var(--space-3);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerLeft {
+    width: 100%;
+  }
+
+  .printButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .content {
+    padding: var(--space-3);
+  }
+
+  .transactionHeader {
+    gap: var(--space-2);
+  }
+
+  .summaryRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .summaryValue {
+    align-self: flex-end;
+  }
+
+  .changeValue {
+    align-self: flex-end;
+  }
+}

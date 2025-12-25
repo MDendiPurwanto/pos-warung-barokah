@@ -1,0 +1,13 @@
+.option[data-selected="true"] {
+  background: var(--color-accent-9);
+  color: var(--color-accent-contrast);
+  font-weight: var(--font-weight-6);
+}
+
+.option[data-selected="false"] {
+  cursor: pointer;
+}
+
+.option[data-selected="false"]:hover {
+  background: var(--color-neutral-5);
+}
