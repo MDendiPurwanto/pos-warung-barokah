@@ -1,8 +1,29 @@
-<svg width="67" height="64" viewBox="0 0 67 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="67" height="64" rx="6" fill="black"/>
-<path d="M40.8654 45.5435L55.156 50.2105L56.9822 44.7029L35.8859 37.3822L32.876 40.7316L38.519 58.2769L45.2848 58.5378L40.8654 45.5435Z" fill="white" fill-opacity="0.8"/>
-<path d="M48.1871 30.2451L57.0737 18.1942L52.3623 14.7684L38.8308 32.4245L41.1082 36.3009L59.6589 36.3958L62 30.087L48.1871 30.2451Z" fill="white" fill-opacity="0.8"/>
-<path d="M35.5137 18.2449L26.7148 6.12811L21.9769 9.51965L34.7095 27.7528L39.1262 26.7989L44.9497 9.31147L39.6305 5.15308L35.5137 18.2449Z" fill="white" fill-opacity="0.8"/>
-<path d="M20.8157 26.7131L6.49058 31.2773L8.27426 36.7981L29.6757 30.4103L30.127 25.9463L15.1754 15.0443L9.54831 18.7837L20.8184 26.7184L20.8157 26.7131Z" fill="white" fill-opacity="0.8"/>
-<path d="M23.9511 43.3622L23.8954 58.2987L29.7348 58.3198L30.2285 36.1391L26.0905 34.3313L11.0274 45.0804L12.8695 51.5499L23.9511 43.3622Z" fill="white" fill-opacity="0.8"/>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22c55e" />
+      <stop offset="1" stop-color="#15803d" />
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="64" height="64" rx="16" fill="url(#grad)" />
+  
+  <!-- Icon: Stylized Shop/Warung -->
+  <g filter="url(#shadow)">
+    <!-- Awning -->
+    <path d="M12 20C12 18.8954 12.8954 18 14 18H50C51.1046 18 52 18.8954 52 20V24H12V20Z" fill="white" fill-opacity="0.9"/>
+    <path d="M12 24H18.6667V30C18.6667 31.1046 17.7712 32 16.6667 32C15.5621 32 14.6667 31.1046 14.6667 30H12V24Z" fill="white" fill-opacity="0.7"/>
+    <path d="M18.6667 24H25.3334V30C25.3334 31.1046 24.4379 32 23.3334 32C22.2288 32 21.3334 31.1046 21.3334 30H18.6667V24Z" fill="white" fill-opacity="0.9"/>
+    <path d="M25.3334 24H32.0001V30C32.0001 31.1046 31.1046 32 30.0001 32C28.8955 32 28.0001 31.1046 28.0001 30H25.3334V24Z" fill="white" fill-opacity="0.7"/>
+    <path d="M32.0001 24H38.6667V30C38.6667 31.1046 37.7713 32 36.6667 32C35.5622 32 34.6667 31.1046 34.6667 30H32.0001V24Z" fill="white" fill-opacity="0.9"/>
+    <path d="M38.6667 24H45.3334V30C45.3334 31.1046 44.4379 32 43.3334 32C42.2288 32 41.3334 31.1046 41.3334 30H38.6667V24Z" fill="white" fill-opacity="0.7"/>
+    <path d="M45.3334 24H52.0001V30C52.0001 31.1046 51.1046 32 50.0001 32C48.8955 32 48.0001 31.1046 48.0001 30H45.3334V24Z" fill="white" fill-opacity="0.9"/>
+    
+    <!-- Building Body -->
+    <path d="M16 30V48C16 49.1046 16.8954 50 18 50H46C47.1046 50 48 49.1046 48 48V30H44V44H38V30H26V44H20V30H16Z" fill="white" fill-opacity="0.95"/>
+  </g>
 </svg>
