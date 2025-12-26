@@ -10,6 +10,16 @@ export function FullscreenToggle() {
             setIsFullscreen(!!document.fullscreenElement);
         };
 
+        // Attempt to restore fullscreen if it was active before refresh
+        const wasFullscreen = sessionStorage.getItem("was_fullscreen");
+        if (wasFullscreen === "true" && !document.fullscreenElement) {
+            sessionStorage.removeItem("was_fullscreen");
+            // Some browsers allow this if it's within the same session/re-nav
+            document.documentElement.requestFullscreen().catch(() => {
+                console.log("Auto-fullscreen after refresh blocked by browser (security).");
+            });
+        }
+
         document.addEventListener("fullscreenchange", handleFullscreenChange);
         return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
     }, []);
@@ -29,12 +39,13 @@ export function FullscreenToggle() {
     return (
         <Button
             variant="outline"
-            size="icon"
+            className="gap-2"
             onClick={toggleFullscreen}
             title={isFullscreen ? "Keluar Fullscreen" : "Masuk Fullscreen"}
             aria-label="Toggle Fullscreen"
         >
-            {isFullscreen ? <Minimize style={{ width: 20, height: 20 }} /> : <Maximize style={{ width: 20, height: 20 }} />}
+            {isFullscreen ? <Minimize style={{ width: 18, height: 18 }} /> : <Maximize style={{ width: 18, height: 18 }} />}
+            <span>{isFullscreen ? "Keluar" : "Layar Penuh"}</span>
         </Button>
     );
 }

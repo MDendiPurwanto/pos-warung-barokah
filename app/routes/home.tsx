@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { ShoppingCart, Package, Receipt, Settings, Store } from "lucide-react";
 import { ColorSchemeToggle } from "~/components/ui/color-scheme-toggle/color-scheme-toggle";
 import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
+import { RefreshButton } from "~/components/ui/refresh-button";
 import styles from "./home.module.css";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
             <p className={styles.subtitle}>Aplikasi Kasir Modern</p>
           </div>
           <div className={styles.toggleWrapper}>
+            <RefreshButton />
             <FullscreenToggle />
             <ColorSchemeToggle />
           </div>

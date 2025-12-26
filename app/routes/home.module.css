@@ -85,15 +85,18 @@
   width: 100%;
 }
 
-.navCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-4);
-  border-color: var(--color-accent-8);
-  background: var(--color-accent-2);
+@media (hover: hover) {
+  .navCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-4);
+    border-color: var(--color-accent-8);
+    background: var(--color-accent-2);
+  }
 }
 
 .navCard:active {
-  transform: translateY(-2px);
+  transform: scale(0.96);
+  background: var(--color-neutral-3);
 }
 
 .navCardIconWrapper {

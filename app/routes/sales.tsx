@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer, Search } from "lucide-react";
+import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer, Search, Wallet, CheckCircle2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog/dialog";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
 import * as ProductService from "~/services/products.service";
@@ -12,6 +13,7 @@ import { BarcodeScannerDialog } from "~/components/barcode-scanner-dialog";
 import { bluetoothPrinterService } from "~/lib/bluetooth-printer";
 import type { ReceiptData } from "~/lib/bluetooth-printer";
 import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
+import { RefreshButton } from "~/components/ui/refresh-button";
 import classNames from "classnames";
 import styles from "./sales.module.css";
 
@@ -27,6 +29,7 @@ export default function Sales() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [showPrinterDialog, setShowPrinterDialog] = useState(false);
   const [pendingPrint, setPendingPrint] = useState<ReceiptData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
@@ -246,6 +249,7 @@ export default function Sales() {
       await loadProducts();
       setCart([]);
       setPaymentAmount("");
+      setIsPaymentOpen(false);
     } catch (error) {
       toast.error("Gagal Menyimpan Transaksi", {
         description: "Terjadi kesalahan saat memproses transaksi",
@@ -330,6 +334,7 @@ export default function Sales() {
             <h1 className={styles.title}>Kasir</h1>
           </div>
           <div className={styles.headerActions}>
+            <RefreshButton />
             <FullscreenToggle />
           </div>
         </div>
@@ -443,98 +448,19 @@ export default function Sales() {
 
             <div className={styles.cartFooter}>
               <div className={styles.totalRow}>
-                <h3 className={styles.totalLabel}>Total Bayar</h3>
+                <h3 className={styles.totalLabel}>Total</h3>
                 <p className={styles.totalAmount}>{formatCurrency(calculateTotal())}</p>
               </div>
 
-              <div className={styles.paymentSection}>
-                <label htmlFor="payment" className={styles.paymentLabel}>
-                  Jumlah Uang
-                </label>
-                <div className={styles.paymentInputWrapper}>
-                  <Input
-                    id="payment"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="0"
-                    value={paymentAmount}
-                    onChange={(e) => handlePaymentChange(e.target.value)}
-                    className={styles.paymentInput}
-                  />
-                  <button
-                    type="button"
-                    onClick={setExactAmount}
-                    className={styles.exactButton}
-                    disabled={cart.length === 0}
-                  >
-                    Pas
-                  </button>
-                </div>
-
-                {cart.length > 0 && (
-                  <div className={styles.quickAmounts}>
-                    {[10000, 20000, 50000, 100000].map((amount) => (
-                      <button
-                        key={amount}
-                        type="button"
-                        onClick={() => setQuickAmount(amount)}
-                        className={styles.quickAmountButton}
-                      >
-                        {formatCurrency(amount)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <div className={styles.numpad}>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, "0", "000", "CLR"].map((key) => (
-                    <button
-                      key={key}
-                      type="button"
-                      className={styles.numpadKey}
-                      onClick={() => {
-                        if (key === "CLR") {
-                          setPaymentAmount("");
-                        } else if (key === "000") {
-                          setPaymentAmount((prev) => prev + "000");
-                        } else {
-                          setPaymentAmount((prev) => prev + key);
-                        }
-                      }}
-                    >
-                      {key}
-                    </button>
-                  ))}
-                </div>
-
-                {paymentAmount && calculateTotal() > 0 && (
-                  <div className={styles.changeRow}>
-                    <span className={styles.changeLabel}>Kembalian:</span>
-                    <span
-                      className={`${styles.changeAmount} ${calculateChange() < 0 ? styles.changeNegative : styles.changePositive}`}
-                    >
-                      {formatCurrency(Math.max(0, calculateChange()))}
-                    </span>
-                  </div>
-                )}
-              </div>
-
               <div className={styles.cartActions}>
-                {/* <Button
-                  onClick={() => completeSale(true)}
-                  disabled={cart.length === 0 || !isPaymentSufficient()}
-                  className={styles.completeButton}
-                >
-                  <Printer className={styles.actionIcon} />
-                  Bayar & Cetak
-                </Button> */}
                 <Button
-                  onClick={() => completeSale(false)}
-                  disabled={cart.length === 0 || !isPaymentSufficient()}
-                  variant="outline"
-                  className={styles.payOnlyButton}
+                  onClick={() => setIsPaymentOpen(true)}
+                  disabled={cart.length === 0}
+                  className={styles.mainPayButton}
+                  size="lg"
                 >
-                  Bayar Saja
+                  <Wallet className={styles.actionIcon} />
+                  BAYAR SEKARANG
                 </Button>
                 <Button
                   variant="outline"
@@ -542,13 +468,119 @@ export default function Sales() {
                   disabled={cart.length === 0}
                   className={styles.cancelButton}
                 >
-                  Batal
+                  Dibatalkan / Hapus Semua
                 </Button>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Payment Dialog - Focused Step for Accessibility */}
+      <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
+        <DialogContent className={styles.paymentModal}>
+          <DialogHeader>
+            <DialogTitle className={styles.paymentModalTitle}>
+              <Wallet style={{ width: 28, height: 28 }} />
+              Proses Pembayaran
+            </DialogTitle>
+            <DialogDescription>Masukkan jumlah uang yang diterima dari pelanggan</DialogDescription>
+          </DialogHeader>
+
+          <div className={styles.paymentGrid}>
+            <div className={styles.paymentSummary}>
+              <div className={styles.summaryItem}>
+                <span className={styles.summaryLabel}>Total Belanja:</span>
+                <span className={styles.summaryValueTotal}>{formatCurrency(calculateTotal())}</span>
+              </div>
+
+              <div className={styles.paymentInputArea}>
+                <label className={styles.paymentLabelBig}>Uang Diterima (Rp):</label>
+                <div className={styles.paymentInputWrapperLarge}>
+                  <Input
+                    type="text"
+                    inputMode="none"
+                    value={paymentAmount}
+                    onChange={(e) => handlePaymentChange(e.target.value)}
+                    className={styles.paymentInputLarge}
+                    placeholder="0"
+                    autoFocus
+                  />
+                  <Button onClick={setExactAmount} variant="secondary" className={styles.fullButton}>
+                    Uang Pas
+                  </Button>
+                </div>
+
+                <div className={styles.quickAmountsGrid}>
+                  {[10000, 20000, 50000, 100000].map((amount) => (
+                    <button
+                      key={amount}
+                      className={styles.quickButton}
+                      onClick={() => setQuickAmount(amount)}
+                    >
+                      {formatCurrency(amount)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {paymentAmount && (
+                <div className={classNames(styles.changeContainer, {
+                  [styles.changeContainerNegative]: calculateChange() < 0,
+                  [styles.changeContainerPositive]: calculateChange() >= 0
+                })}>
+                  <span className={styles.changeLabelLarge}>
+                    {calculateChange() < 0 ? "Kurang Bayar:" : "Uang Kembalian:"}
+                  </span>
+                  <span className={styles.changeValueLarge}>
+                    {formatCurrency(Math.abs(calculateChange()))}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.numpadContainerLarge}>
+              <div className={styles.numpadLarge}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "0", "000", "Hapus"].map((key) => (
+                  <button
+                    key={key}
+                    className={classNames(styles.numpadButtonLarge, {
+                      [styles.numpadButtonClr]: key === "Hapus"
+                    })}
+                    onClick={() => {
+                      if (key === "Hapus") setPaymentAmount("");
+                      else if (key === "000") setPaymentAmount((prev: string) => prev + "000");
+                      else setPaymentAmount((prev: string) => prev + key);
+                    }}
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+
+              <div className={styles.paymentActionButtons}>
+                <Button
+                  size="lg"
+                  disabled={!isPaymentSufficient()}
+                  onClick={() => completeSale(false)}
+                  className={styles.finalizeButton}
+                >
+                  <CheckCircle2 style={{ width: 24, height: 24 }} />
+                  SELESAI & SIMPAN
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setIsPaymentOpen(false)}
+                  className={styles.backToCartBtn}
+                >
+                  Kembali ke Keranjang
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Barcode Scanner Dialog */}
       <BarcodeScannerDialog
