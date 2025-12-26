@@ -1,5 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import JsBarcode from "jsbarcode";
+import * as ReactToPrint from "react-to-print";
+// Handle potential default export structure in CJS modules
+// @ts-ignore
+const useReactToPrint = ReactToPrint.useReactToPrint || ReactToPrint.default?.useReactToPrint || ReactToPrint.default;
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "./ui/dialog/dialog";
 import { Button } from "./ui/button/button";
 import { Printer, Download } from "lucide-react";
@@ -13,16 +17,18 @@ interface PrintPriceTagsDialogProps {
 }
 
 export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPriceTagsDialogProps) {
-  const printRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [barcodeData, setBarcodeData] = useState<Record<string, string>>({});
 
-  // Generate barcodes when dialog opens
+  // Generate barcode data URLs when dialog opens
   useEffect(() => {
-    if (open && printRef.current) {
-      const canvases = printRef.current.querySelectorAll("canvas");
-      canvases.forEach((canvas, index) => {
-        const product = products[index];
-        if (product?.barcode) {
+    if (open) {
+      const newBarcodeData: Record<string, string> = {};
+
+      products.forEach((product) => {
+        if (product.barcode) {
           try {
+            const canvas = document.createElement('canvas');
             JsBarcode(canvas, product.barcode, {
               format: "EAN13",
               width: 2,
@@ -31,128 +37,21 @@ export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPric
               fontSize: 12,
               margin: 5,
             });
+            newBarcodeData[product.id] = canvas.toDataURL();
           } catch (error) {
             console.error(`Error generating barcode for ${product.name}:`, error);
           }
         }
       });
+
+      setBarcodeData(newBarcodeData);
     }
   }, [open, products]);
 
-  const handlePrint = () => {
-    if (printRef.current) {
-      const printWindow = window.open("", "_blank");
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Cetak Tag Harga</title>
-              <style>
-                * {
-                  margin: 0;
-                  padding: 0;
-                  box-sizing: border-box;
-                }
-                
-                body {
-                  font-family: Arial, sans-serif;
-                  padding: 20px;
-                }
-                
-                .tags-grid {
-                  display: grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  gap: 20px;
-                  page-break-inside: avoid;
-                }
-                
-                .tag {
-                  border: 2px dashed #333;
-                  padding: 15px;
-                  text-align: center;
-                  page-break-inside: avoid;
-                  background: white;
-                }
-                
-                .tag-store {
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: #333;
-                  margin-bottom: 10px;
-                  border-bottom: 1px solid #ddd;
-                  padding-bottom: 8px;
-                }
-                
-                .tag-name {
-                  font-size: 16px;
-                  font-weight: bold;
-                  margin-bottom: 8px;
-                  min-height: 40px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                }
-                
-                .tag-price {
-                  font-size: 24px;
-                  font-weight: bold;
-                  color: #000;
-                  margin: 10px 0;
-                }
-                
-                .tag-barcode {
-                  margin-top: 10px;
-                  display: flex;
-                  justify-content: center;
-                }
-                
-                .tag-barcode canvas {
-                  max-width: 100%;
-                  height: auto;
-                }
-                
-                .no-barcode {
-                  font-size: 12px;
-                  color: #999;
-                  font-style: italic;
-                  padding: 10px 0;
-                }
-                
-                @media print {
-                  body {
-                    padding: 10px;
-                  }
-                  
-                  .tags-grid {
-                    gap: 15px;
-                  }
-                  
-                  .tag {
-                    border: 1px solid #333;
-                    break-inside: avoid;
-                  }
-                }
-              </style>
-            </head>
-            <body>
-              ${printRef.current.innerHTML}
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-
-        // Wait for images/barcodes to load before printing
-        setTimeout(() => {
-          printWindow.print();
-        }, 500);
-      }
-    }
-  };
-
-  const handleDownloadPDF = () => {
-    // For now, just trigger print which allows save as PDF
-    handlePrint();
-  };
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: "Tag Harga - POS Warung Barokah",
+  });
 
   const formatCurrency = (amount: number) => {
     return `Rp ${amount.toLocaleString("id-ID")}`;
@@ -171,15 +70,65 @@ export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPric
           </DialogDescription>
         </DialogHeader>
 
+        {/* Scrollable Preview Area */}
         <div className={styles.previewContainer}>
-          <div ref={printRef} className={styles.tagsGrid}>
+          <div className={styles.tagsGrid}>
             {products.map((product) => (
               <div key={product.id} className={styles.tag}>
                 <div className={styles.tagStore}>Toko Kori Barokah</div>
                 <div className={styles.tagName}>{product.name}</div>
                 <div className={styles.tagPrice}>{formatCurrency(product.price)}</div>
+                {product.barcode && barcodeData[product.id] ? (
+                  <div className={styles.tagBarcode}>
+                    <img src={barcodeData[product.id]} alt="Barcode" />
+                  </div>
+                ) : (
+                  <div className={styles.noBarcode}>Tidak ada barcode</div>
+                )}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Hidden Printable Content (Visible only during print) */}
+        <div style={{ display: "none" }}>
+          <div ref={contentRef} className={styles.printContainer}>
+            <style type="text/css" media="print">
+              {`
+                @page { size: A4; margin: 10mm; }
+                @media print {
+                  body { -webkit-print-color-adjust: exact; }
+                  .${styles.printContainer} { display: block !important; }
+                  .${styles.tagsGrid} {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr) !important;
+                    gap: 15px;
+                  }
+                  .${styles.tag} {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                    border: 4px dotted #000 !important;
+                    border-radius: 0 !important;
+                  }
+                }
+              `}
+            </style>
+            <div className={styles.tagsGrid}>
+              {products.map((product) => (
+                <div key={product.id} className={styles.tag}>
+                  <div className={styles.tagStore}>Toko Kori Barokah</div>
+                  <div className={styles.tagName}>{product.name}</div>
+                  <div className={styles.tagPrice}>{formatCurrency(product.price)}</div>
+                  {product.barcode && barcodeData[product.id] ? (
+                    <div className={styles.tagBarcode}>
+                      <img src={barcodeData[product.id]} alt="Barcode" />
+                    </div>
+                  ) : (
+                    <div className={styles.noBarcode}>Tidak ada barcode</div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -188,11 +137,11 @@ export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPric
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
-            <Button variant="outline" onClick={handleDownloadPDF}>
+            <Button variant="outline" onClick={() => handlePrint()}>
               <Download style={{ width: 16, height: 16 }} />
               Download PDF
             </Button>
-            <Button onClick={handlePrint}>
+            <Button onClick={() => handlePrint()}>
               <Printer style={{ width: 16, height: 16 }} />
               Cetak
             </Button>
