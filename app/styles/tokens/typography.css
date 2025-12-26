@@ -1,4 +1,4 @@
-:where(html) {
+html {
   --font-system-ui: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
   --font-transitional: Charter, Bitstream Charter, Sitka Text, Cambria, serif;
   --font-old-style: Iowan Old Style, Palatino Linotype, URW Palladio L, P052, serif;
@@ -51,8 +51,18 @@
   --font-size-7: 3rem;
   --font-size-8: 3.5rem;
 
-  --font-size-fluid-0: max(0.75rem, min(2vw, 1rem));
-  --font-size-fluid-1: max(1rem, min(4vw, 1.5rem));
-  --font-size-fluid-2: max(1.5rem, min(6vw, 2.5rem));
-  --font-size-fluid-3: max(2rem, min(9vw, 3.5rem));
+  /* Fallback for older browsers */
+  --font-size-fluid-0: 1rem;
+  --font-size-fluid-1: 1.25rem;
+  --font-size-fluid-2: 2rem;
+  --font-size-fluid-3: 3rem;
+}
+
+@supports (font-size: max(1rem, 1rem)) {
+  html {
+    --font-size-fluid-0: max(0.75rem, min(2vw, 1rem));
+    --font-size-fluid-1: max(1rem, min(4vw, 1.5rem));
+    --font-size-fluid-2: max(1.5rem, min(6vw, 2.5rem));
+    --font-size-fluid-3: max(2rem, min(9vw, 3.5rem));
+  }
 }

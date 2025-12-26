@@ -1,4 +1,4 @@
-:where(html) {
+html {
   --shadow-color: 220 3% 15%;
   --shadow-strength: 1%;
 
@@ -46,10 +46,10 @@
   --radius-6: 12px;
 
   --radius-round: 1e5px;
+}
 
-  :where(html.dark-theme) {
-    --shadow-color: 220 40% 2%;
-    --shadow-strength: 25%;
-    --inner-shadow-highlight: inset 0 -0.5px 0 0 hsla(0, 0%, 100%, 0.067), inset 0 0.5px 0 0 rgba(0, 0, 0, 0.467);
-  }
+html.dark {
+  --shadow-color: 220 40% 2%;
+  --shadow-strength: 25%;
+  --inner-shadow-highlight: inset 0 -0.5px 0 0 hsla(0, 0%, 100%, 0.067), inset 0 0.5px 0 0 rgba(0, 0, 0, 0.467);
 }
