@@ -239,6 +239,12 @@
   gap: var(--space-4);
 }
 
+@media (min-width: 640px) and (max-height: 600px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .formActions {
   display: flex;
   gap: var(--space-3);

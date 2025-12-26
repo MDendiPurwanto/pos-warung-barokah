@@ -1,18 +1,28 @@
 .dialogContent {
     max-width: 800px;
-    max-height: 80vh;
-    display: flex;
+    width: 95vw;
+    height: 90vh;
+    max-height: 90vh;
+    display: flex !important;
     flex-direction: column;
+    padding: var(--space-5) !important;
+    overflow: hidden;
+    /* Prevent dialog itself from scrolling, let children scroll */
 }
 
 .previewContainer {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+    /* Important for flexbox scrolling */
     padding: var(--space-4);
     background-color: var(--color-neutral-2);
     border: 1px solid var(--color-neutral-4);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-4);
+    /* Fixed reference to var(--radius-4) which exists in decorations.css */
     margin: var(--space-4) 0;
+    overscroll-behavior: contain;
 }
 
 .printArea {
