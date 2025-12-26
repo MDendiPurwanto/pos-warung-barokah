@@ -8,6 +8,7 @@ export interface Product {
   cost_price?: number;
   stock: number;
   barcode?: string;
+  expiry_date?: string;
 }
 
 export async function getProducts(): Promise<Product[]> {

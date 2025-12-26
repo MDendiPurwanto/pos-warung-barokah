@@ -6,11 +6,16 @@ CREATE TABLE IF NOT EXISTS products (
   id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
   name TEXT NOT NULL,
   price INTEGER NOT NULL CHECK (price >= 0),
-  cost_price INTEGER DEFAULT 0 CHECK (cost_price >= 0),
+  cost_price DECIMAL(12, 2) DEFAULT 0,
   stock INTEGER NOT NULL CHECK (stock >= 0),
   barcode TEXT,
+  expiry_date DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- For existing databases, run:
+-- ALTER TABLE products ADD COLUMN cost_price DECIMAL(12, 2) DEFAULT 0;
+-- ALTER TABLE products ADD COLUMN expiry_date DATE;
 
 -- Create transactions table
 CREATE TABLE IF NOT EXISTS transactions (

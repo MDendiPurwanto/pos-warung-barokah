@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight, Calendar, ArrowUpDown, AlertCircle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
@@ -48,9 +48,10 @@ export default function Products() {
   const [scannerMode, setScannerMode] = useState<'add' | 'edit'>('add');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
+  const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
   const [stockAdjustment, setStockAdjustment] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<string>("name-asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,8 +80,31 @@ export default function Products() {
     (product.barcode && product.barcode.includes(searchQuery))
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice(
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+      case "stock-asc":
+        return a.stock - b.stock;
+      case "stock-desc":
+        return b.stock - a.stock;
+      case "expiry-asc":
+        if (!a.expiry_date) return 1;
+        if (!b.expiry_date) return -1;
+        return new Date(a.expiry_date).getTime() - new Date(b.expiry_date).getTime();
+      case "expiry-desc":
+        if (!a.expiry_date) return 1;
+        if (!b.expiry_date) return -1;
+        return new Date(b.expiry_date).getTime() - new Date(a.expiry_date).getTime();
+      default:
+        return 0;
+    }
+  });
+
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+  const paginatedProducts = sortedProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -88,6 +112,15 @@ export default function Products() {
   const totalProducts = products.length;
   const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
   const lowStockCount = products.filter((p) => p.stock < 10).length;
+  const expiredCount = products.filter(p => p.expiry_date && new Date(p.expiry_date) <= new Date()).length;
+  const expiringSoonCount = products.filter(p => {
+    if (!p.expiry_date) return false;
+    const expiry = new Date(p.expiry_date);
+    const today = new Date();
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 && diffDays <= 30; // 30 days window
+  }).length;
 
   const handleAddProduct = async () => {
     if (!formData.name || !formData.price || !formData.stock) {
@@ -104,11 +137,12 @@ export default function Products() {
         cost_price: parseFloat(formData.costPrice || "0"),
         stock: parseInt(formData.stock),
         barcode: formData.barcode || undefined,
+        expiry_date: formData.expiryDate || undefined,
       });
 
       await loadProducts();
       setIsAddDialogOpen(false);
-      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
 
       toast.success("Produk Ditambahkan", {
         description: `${newProduct.name} berhasil ditambahkan ke inventori`,
@@ -137,12 +171,13 @@ export default function Products() {
         cost_price: parseFloat(formData.costPrice || "0"),
         stock: parseInt(formData.stock),
         barcode: formData.barcode || undefined,
+        expiry_date: formData.expiryDate || undefined,
       });
 
       await loadProducts();
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
 
       toast.success("Produk Diperbarui", {
         description: "Informasi produk berhasil diperbarui",
@@ -245,6 +280,7 @@ export default function Products() {
       costPrice: (product.cost_price || 0).toString(),
       stock: product.stock.toString(),
       barcode: product.barcode || "",
+      expiryDate: product.expiry_date || "",
     });
     setIsEditDialogOpen(true);
   };
@@ -398,7 +434,7 @@ export default function Products() {
   };
 
   const openAddDialog = () => {
-    setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
+    setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
     setIsAddDialogOpen(true);
   };
 
@@ -453,6 +489,14 @@ export default function Products() {
               <p className={styles.statValue}>{lowStockCount}</p>
             </div>
           </div>
+
+          <div className={styles.statCard}>
+            <AlertCircle className={styles.statIcon} style={{ background: 'var(--color-error-3)', color: 'var(--color-error-11)' }} />
+            <div className={styles.statContent}>
+              <p className={styles.statLabel}>Kedaluwarsa (30 Hari)</p>
+              <p className={styles.statValue}>{expiringSoonCount + expiredCount}</p>
+            </div>
+          </div>
         </div>
 
         <div className={styles.productSection}>
@@ -469,6 +513,20 @@ export default function Products() {
                   }}
                   className={styles.searchInput}
                 />
+              </div>
+              <div className={styles.sortContainer}>
+                <select
+                  className={styles.sortSelect}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="name-asc">Nama (A-Z)</option>
+                  <option value="name-desc">Nama (Z-A)</option>
+                  <option value="stock-asc">Stok (Sedikit)</option>
+                  <option value="stock-desc">Stok (Banyak)</option>
+                  <option value="expiry-asc">Kedaluwarsa (Terdekat)</option>
+                  <option value="expiry-desc">Kedaluwarsa (Terlama)</option>
+                </select>
               </div>
             </div>
             <div className={styles.productHeaderActions}>
@@ -534,6 +592,7 @@ export default function Products() {
                     <TableHead>Nama Produk</TableHead>
                     <TableHead>Harga</TableHead>
                     <TableHead>Stok</TableHead>
+                    <TableHead>Kedaluwarsa</TableHead>
                     <TableHead>Barcode</TableHead>
                     <TableHead>Aksi</TableHead>
                   </TableRow>
@@ -553,6 +612,19 @@ export default function Products() {
                       <TableCell>{formatCurrency(product.price)}</TableCell>
                       <TableCell className={product.stock < 10 ? styles.lowStock : ""}>
                         {product.stock} {product.stock < 10 && "⚠️"}
+                      </TableCell>
+                      <TableCell>
+                        {product.expiry_date ? (
+                          <span className={
+                            new Date(product.expiry_date) <= new Date()
+                              ? styles.expiredDate
+                              : new Date(product.expiry_date) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                                ? styles.expiringSoonDate
+                                : ""
+                          }>
+                            {new Date(product.expiry_date).toLocaleDateString('id-ID')}
+                          </span>
+                        ) : "-"}
                       </TableCell>
                       <TableCell>
                         {product.barcode ? (
@@ -698,6 +770,15 @@ export default function Products() {
               />
             </div>
             <div>
+              <Label htmlFor="expiryDate">Tanggal Kedaluwarsa</Label>
+              <Input
+                id="expiryDate"
+                type="date"
+                value={formData.expiryDate}
+                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+              />
+            </div>
+            <div>
               <Label htmlFor="barcode">Barcode (Opsional)</Label>
               <div className={styles.barcodeInputGroup}>
                 <Input
@@ -777,6 +858,15 @@ export default function Products() {
                 type="number"
                 value={formData.stock}
                 onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-expiryDate">Tanggal Kedaluwarsa</Label>
+              <Input
+                id="edit-expiryDate"
+                type="date"
+                value={formData.expiryDate}
+                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
               />
             </div>
             <div>
