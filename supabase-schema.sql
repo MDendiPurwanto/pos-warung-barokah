@@ -54,7 +54,9 @@ BEGIN
     RAISE EXCEPTION 'Insufficient stock for product: %', product_id;
   END IF;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public;
 
 -- Insert initial products data
 INSERT INTO products (id, name, price, stock, barcode) VALUES
