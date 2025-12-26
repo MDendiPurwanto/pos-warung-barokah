@@ -31,6 +31,7 @@ import { BarcodeScannerDialog } from "~/components/barcode-scanner-dialog";
 import { BarcodeGeneratorDialog } from "~/components/barcode-generator-dialog";
 import { PrintPriceTagsDialog } from "~/components/print-price-tags-dialog";
 import { PrintPriceListDialog } from "~/components/print-price-list-dialog";
+import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
 import styles from "./products.module.css";
 
 export default function Products() {
@@ -470,6 +471,7 @@ export default function Products() {
             <h1 className={styles.title}>Kelola Produk & Stok</h1>
           </div>
           <div className={styles.headerActions}>
+            <FullscreenToggle />
             <input
               ref={fileInputRef}
               type="file"

@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { ShoppingCart, Package, Receipt, Settings, Store } from "lucide-react";
 import { ColorSchemeToggle } from "~/components/ui/color-scheme-toggle/color-scheme-toggle";
+import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
 import styles from "./home.module.css";
 
 export default function Home() {
@@ -10,10 +11,11 @@ export default function Home() {
         <div className={styles.headerContent}>
           <Store className={styles.logo} />
           <div className={styles.titleWrapper}>
-            <h1 className={styles.title}>Toko Kori Barokah</h1>
-            <p className={styles.subtitle}>Kasir Warung Sederhana</p>
+            <h1 className={styles.title}>Warung Barokah</h1>
+            <p className={styles.subtitle}>Aplikasi Kasir Modern</p>
           </div>
           <div className={styles.toggleWrapper}>
+            <FullscreenToggle />
             <ColorSchemeToggle />
           </div>
         </div>

@@ -11,6 +11,7 @@ import { BluetoothPrinterDialog } from "~/components/bluetooth-printer-dialog";
 import { BarcodeScannerDialog } from "~/components/barcode-scanner-dialog";
 import { bluetoothPrinterService } from "~/lib/bluetooth-printer";
 import type { ReceiptData } from "~/lib/bluetooth-printer";
+import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
 import styles from "./sales.module.css";
 
 interface CartItem {
@@ -296,6 +297,9 @@ export default function Sales() {
               Kembali
             </Link>
             <h1 className={styles.title}>Kasir</h1>
+          </div>
+          <div className={styles.headerActions}>
+            <FullscreenToggle />
           </div>
         </div>
       </header>
