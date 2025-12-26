@@ -140,7 +140,7 @@ export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPric
           </html>
         `);
         printWindow.document.close();
-        
+
         // Wait for images/barcodes to load before printing
         setTimeout(() => {
           printWindow.print();
@@ -178,13 +178,6 @@ export function PrintPriceTagsDialog({ open, onOpenChange, products }: PrintPric
                 <div className={styles.tagStore}>Toko Kori Barokah</div>
                 <div className={styles.tagName}>{product.name}</div>
                 <div className={styles.tagPrice}>{formatCurrency(product.price)}</div>
-                {product.barcode ? (
-                  <div className={styles.tagBarcode}>
-                    <canvas />
-                  </div>
-                ) : (
-                  <div className={styles.noBarcode}>Tidak ada barcode</div>
-                )}
               </div>
             ))}
           </div>
