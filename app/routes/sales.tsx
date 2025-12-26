@@ -251,7 +251,8 @@ export default function Sales() {
   };
 
   const handleBarcodeDetected = (barcode: string) => {
-    const product = products.find((p) => p.barcode === barcode);
+    const scannedCode = barcode.trim();
+    const product = products.find((p) => p.barcode?.trim() === scannedCode);
 
     if (product) {
       addToCart(product);
@@ -430,7 +431,7 @@ export default function Sales() {
                 {paymentAmount && calculateTotal() > 0 && (
                   <div className={styles.changeRow}>
                     <span className={styles.changeLabel}>Kembalian:</span>
-                    <span 
+                    <span
                       className={`${styles.changeAmount} ${calculateChange() < 0 ? styles.changeNegative : styles.changePositive}`}
                     >
                       {formatCurrency(Math.max(0, calculateChange()))}
@@ -440,16 +441,16 @@ export default function Sales() {
               </div>
 
               <div className={styles.cartActions}>
-                <Button 
-                  onClick={() => completeSale(true)} 
-                  disabled={cart.length === 0 || !isPaymentSufficient()} 
+                <Button
+                  onClick={() => completeSale(true)}
+                  disabled={cart.length === 0 || !isPaymentSufficient()}
                   className={styles.completeButton}
                 >
                   <Printer className={styles.actionIcon} />
                   Bayar & Cetak
                 </Button>
-                <Button 
-                  onClick={() => completeSale(false)} 
+                <Button
+                  onClick={() => completeSale(false)}
                   disabled={cart.length === 0 || !isPaymentSufficient()}
                   variant="outline"
                   className={styles.payOnlyButton}

@@ -48,6 +48,7 @@ export default function Products() {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
   const [stockAdjustment, setStockAdjustment] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
@@ -68,6 +69,11 @@ export default function Products() {
       setIsLoading(false);
     }
   };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (product.barcode && product.barcode.includes(searchQuery))
+  );
 
   const totalProducts = products.length;
   const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
@@ -381,6 +387,11 @@ export default function Products() {
     });
   };
 
+  const openAddDialog = () => {
+    setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
+    setIsAddDialogOpen(true);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -407,7 +418,7 @@ export default function Products() {
               <Upload style={{ width: 20, height: 20 }} />
               Import Excel
             </Button>
-            <Button onClick={() => setIsAddDialogOpen(true)} className={styles.addButton}>
+            <Button onClick={openAddDialog} className={styles.addButton}>
               <Plus style={{ width: 20, height: 20 }} />
               Tambah Produk
             </Button>
@@ -417,14 +428,6 @@ export default function Products() {
 
       <main className={styles.main}>
         <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <Package className={styles.statIcon} />
-            <div className={styles.statContent}>
-              <p className={styles.statLabel}>Total Produk</p>
-              <p className={styles.statValue}>{totalProducts}</p>
-            </div>
-          </div>
-
           <div className={styles.statCard}>
             <DollarSign className={styles.statIcon} />
             <div className={styles.statContent}>
@@ -444,7 +447,17 @@ export default function Products() {
 
         <div className={styles.productSection}>
           <div className={styles.productHeader}>
-            <h2 className={styles.productTitle}>Daftar Produk</h2>
+            <div className={styles.productHeaderLeft}>
+              <h2 className={styles.productTitle}>Daftar Produk</h2>
+              <div className={styles.searchContainer}>
+                <Input
+                  placeholder="Cari produk..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={styles.searchInput}
+                />
+              </div>
+            </div>
             <div className={styles.productHeaderActions}>
               {products.length > 0 && (
                 <Button
@@ -503,7 +516,7 @@ export default function Products() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {filteredProducts.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
                         <input
@@ -787,6 +800,7 @@ export default function Products() {
       </AlertDialog>
 
       {/* Bulk Delete Confirmation Dialog */}
+      {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -803,12 +817,14 @@ export default function Products() {
       </AlertDialog>
 
       {/* Barcode Scanner Dialog */}
+      {/* Barcode Scanner Dialog */}
       <BarcodeScannerDialog
         open={isScannerOpen}
         onOpenChange={setIsScannerOpen}
         onScan={handleBarcodeScanned}
       />
 
+      {/* Barcode Generator Dialog */}
       {/* Barcode Generator Dialog */}
       <BarcodeGeneratorDialog
         open={isGeneratorOpen}
@@ -818,12 +834,15 @@ export default function Products() {
       />
 
       {/* Print Price Tags Dialog */}
+      {/* Print Price Tags Dialog */}
       <PrintPriceTagsDialog
         open={isPrintDialogOpen}
         onOpenChange={setIsPrintDialogOpen}
-        products={selectedProductIds.length > 0
-          ? products.filter(p => selectedProductIds.includes(p.id))
-          : products}
+        products={
+          selectedProductIds.length > 0
+            ? products.filter(p => selectedProductIds.includes(p.id))
+            : products
+        }
       />
     </div>
   );
