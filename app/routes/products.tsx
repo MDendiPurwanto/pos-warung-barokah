@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer } from "lucide-react";
+import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
@@ -30,6 +30,7 @@ import type { Product } from "~/services/products.service";
 import { BarcodeScannerDialog } from "~/components/barcode-scanner-dialog";
 import { BarcodeGeneratorDialog } from "~/components/barcode-generator-dialog";
 import { PrintPriceTagsDialog } from "~/components/print-price-tags-dialog";
+import { PrintPriceListDialog } from "~/components/print-price-list-dialog";
 import styles from "./products.module.css";
 
 export default function Products() {
@@ -43,12 +44,15 @@ export default function Products() {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+  const [isPriceListDialogOpen, setIsPriceListDialogOpen] = useState(false);
   const [scannerMode, setScannerMode] = useState<'add' | 'edit'>('add');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
   const [stockAdjustment, setStockAdjustment] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
@@ -73,6 +77,12 @@ export default function Products() {
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (product.barcode && product.barcode.includes(searchQuery))
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const totalProducts = products.length;
@@ -453,21 +463,34 @@ export default function Products() {
                 <Input
                   placeholder="Cari produk..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className={styles.searchInput}
                 />
               </div>
             </div>
             <div className={styles.productHeaderActions}>
               {products.length > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={() => setIsPrintDialogOpen(true)}
-                  className={styles.printButton}
-                >
-                  <Printer style={{ width: 18, height: 18 }} />
-                  Cetak Tag Harga
-                </Button>
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsPrintDialogOpen(true)}
+                    className={styles.printButton}
+                  >
+                    <Printer style={{ width: 18, height: 18 }} />
+                    Cetak Tag Harga
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsPriceListDialogOpen(true)}
+                    className={styles.printButton}
+                  >
+                    <Printer style={{ width: 18, height: 18 }} />
+                    Cetak Daftar Harga
+                  </Button>
+                </>
               )}
               {selectedProductIds.length > 0 && (
                 <Button
@@ -516,7 +539,7 @@ export default function Products() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
+                  {paginatedProducts.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
                         <input
@@ -573,6 +596,55 @@ export default function Products() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {!isLoading && filteredProducts.length > 0 && (
+            <div className={styles.pagination}>
+              <div className={styles.paginationInfo}>
+                Menampilkan {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredProducts.length)} dari {filteredProducts.length} produk
+              </div>
+              <div className={styles.paginationControls}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft style={{ width: 16, height: 16 }} />
+                </Button>
+                <div className={styles.pageNumbers}>
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    // Logic to show reasonable page numbers (e.g., around current page)
+                    // For simplicity, let's just show standard window or simple logic for now
+                    // Simple "smart" window logic:
+                    let startPage = Math.max(1, currentPage - 2);
+                    if (startPage + 4 > totalPages) {
+                      startPage = Math.max(1, totalPages - 4);
+                    }
+                    return startPage + i;
+                  }).map((pageNum) => (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={styles.pageNumberButton}
+                    >
+                      {pageNum}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight style={{ width: 16, height: 16 }} />
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -838,6 +910,17 @@ export default function Products() {
       <PrintPriceTagsDialog
         open={isPrintDialogOpen}
         onOpenChange={setIsPrintDialogOpen}
+        products={
+          selectedProductIds.length > 0
+            ? products.filter(p => selectedProductIds.includes(p.id))
+            : products
+        }
+      />
+
+      {/* Print Price List Dialog */}
+      <PrintPriceListDialog
+        open={isPriceListDialogOpen}
+        onOpenChange={setIsPriceListDialogOpen}
         products={
           selectedProductIds.length > 0
             ? products.filter(p => selectedProductIds.includes(p.id))

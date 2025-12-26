@@ -1,0 +1,117 @@
+.dialogContent {
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.previewContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4);
+    background-color: var(--color-neutral-2);
+    border: 1px solid var(--color-neutral-4);
+    border-radius: var(--radius-md);
+    margin: var(--space-4) 0;
+}
+
+.printArea {
+    background-color: white;
+    padding: 40px;
+    /* Standard margin for print preview */
+    color: black;
+    font-family: sans-serif;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 3px double black;
+    padding-bottom: 10px;
+}
+
+.storeName {
+    font-size: 24px;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.documentTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px 0 0 0;
+}
+
+.date {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.productList {
+    width: 100%;
+    column-count: 2;
+    column-gap: 40px;
+    column-rule: 1px solid #ccc;
+}
+
+.categoryGroup {
+    break-inside: avoid;
+    margin-bottom: 15px;
+}
+
+.productRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dotted #ccc;
+    break-inside: avoid;
+}
+
+.productName {
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
+    padding-right: 10px;
+}
+
+.productPrice {
+    font-size: 16px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.actionButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    .printArea,
+    .printArea * {
+        visibility: visible;
+    }
+
+    .printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        column-count: 2;
+    }
+}
