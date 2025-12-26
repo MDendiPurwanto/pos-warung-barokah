@@ -1,6 +1,8 @@
 .container {
   min-height: 100vh;
   background: var(--color-neutral-2);
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .header {
@@ -70,12 +72,30 @@
   grid-template-columns: 1fr 400px;
   gap: var(--space-6);
   align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .main {
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 992px) {
+  .main {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
 }
 
 .leftPanel {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+  min-width: 0;
 }
 
 .searchSection {
@@ -256,9 +276,17 @@
 .rightPanel {
   position: sticky;
   top: var(--space-6);
-  max-height: calc(100vh - var(--space-6) * 2 - 80px);
+  max-height: calc(100vh - var(--space-6) * 2 - 20px);
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .rightPanel {
+    position: static;
+    max-height: none;
+  }
 }
 
 .cartSection {
