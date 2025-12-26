@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer } from "lucide-react";
+import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer, Search } from "lucide-react";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
 import * as ProductService from "~/services/products.service";
@@ -12,6 +12,7 @@ import { BarcodeScannerDialog } from "~/components/barcode-scanner-dialog";
 import { bluetoothPrinterService } from "~/lib/bluetooth-printer";
 import type { ReceiptData } from "~/lib/bluetooth-printer";
 import { FullscreenToggle } from "~/components/ui/fullscreen-toggle";
+import classNames from "classnames";
 import styles from "./sales.module.css";
 
 interface CartItem {
@@ -24,14 +25,39 @@ export default function Sales() {
   const [isLoading, setIsLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [showPrinterDialog, setShowPrinterDialog] = useState(false);
   const [pendingPrint, setPendingPrint] = useState<ReceiptData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
 
+  const categories = ["Semua", "Minuman", "Makanan", "Sembako", "Rokok", "Lainnya"];
+
+  // Helper to categorize products on the fly (since data doesn't have it yet)
+  const getProductCategory = (name: string): string => {
+    const n = name.toLowerCase();
+    if (n.includes("aqua") || n.includes("teh") || n.includes("kopi") || n.includes("minum") || n.includes("susu") || n.includes("cola")) return "Minuman";
+    if (n.includes("indomie") || n.includes("snack") || n.includes("biskuit") || n.includes("roti") || n.includes("telur")) return "Makanan";
+    if (n.includes("beras") || n.includes("minyak") || n.includes("gula") || n.includes("garam") || n.includes("tepung")) return "Sembako";
+    if (n.includes("rokok") || n.includes("surya") || n.includes("sampoerna") || n.includes("gudang garam")) return "Rokok";
+    return "Lainnya";
+  };
+
 
   useEffect(() => {
     loadProducts();
+
+    // Focus search on 'S' key or any alphabetic key if not focused
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
+      if (e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
+        const searchInput = document.querySelector(`.${styles.searchInput}`) as HTMLInputElement;
+        searchInput?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const loadProducts = async () => {
@@ -48,11 +74,16 @@ export default function Sales() {
     }
   };
 
-  const filteredProducts = products.filter(
-    (product) =>
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (product.barcode && product.barcode.includes(searchQuery))
-  );
+      (product.barcode && product.barcode.includes(searchQuery));
+
+    const matchesCategory =
+      selectedCategory === "Semua" || getProductCategory(product.name) === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   const addToCart = (product: Product) => {
     if (product.stock === 0) {
@@ -308,17 +339,40 @@ export default function Sales() {
         <div className={styles.leftPanel}>
           <div className={styles.searchSection}>
             <div className={styles.searchHeader}>
-              <Input
-                type="text"
-                placeholder="Cari produk berdasarkan nama atau barcode..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={styles.searchInput}
-              />
-              <Button onClick={handleScan} className={styles.scanButton}>
+              <div className={styles.searchInputWrapper}>
+                <Search className={styles.searchIcon} />
+                <Input
+                  type="text"
+                  placeholder="Cari produk atau scan barcode..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={styles.searchInput}
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button className={styles.clearSearch} onClick={() => setSearchQuery("")}>
+                    <X style={{ width: 16, height: 16 }} />
+                  </button>
+                )}
+              </div>
+              <Button onClick={handleScan} className={styles.scanButton} variant="secondary">
                 <ScanBarcode className={styles.scanIcon} />
-                Pindai
+                Kamera
               </Button>
+            </div>
+
+            <div className={styles.categoryBar}>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  className={classNames(styles.categoryTab, {
+                    [styles.activeCategory]: selectedCategory === cat,
+                  })}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
 
             <div className={styles.productGrid}>
@@ -432,6 +486,27 @@ export default function Sales() {
                   </div>
                 )}
 
+                <div className={styles.numpad}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, "0", "000", "CLR"].map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={styles.numpadKey}
+                      onClick={() => {
+                        if (key === "CLR") {
+                          setPaymentAmount("");
+                        } else if (key === "000") {
+                          setPaymentAmount((prev) => prev + "000");
+                        } else {
+                          setPaymentAmount((prev) => prev + key);
+                        }
+                      }}
+                    >
+                      {key}
+                    </button>
+                  ))}
+                </div>
+
                 {paymentAmount && calculateTotal() > 0 && (
                   <div className={styles.changeRow}>
                     <span className={styles.changeLabel}>Kembalian:</span>
@@ -445,14 +520,14 @@ export default function Sales() {
               </div>
 
               <div className={styles.cartActions}>
-                <Button
+                {/* <Button
                   onClick={() => completeSale(true)}
                   disabled={cart.length === 0 || !isPaymentSufficient()}
                   className={styles.completeButton}
                 >
                   <Printer className={styles.actionIcon} />
                   Bayar & Cetak
-                </Button>
+                </Button> */}
                 <Button
                   onClick={() => completeSale(false)}
                   disabled={cart.length === 0 || !isPaymentSufficient()}
