@@ -6,8 +6,9 @@ import { Printer } from "lucide-react";
 import type { Product } from "~/services/products.service";
 import styles from "./print-price-list-dialog.module.css";
 
-// Fix for Vite import issue with react-to-print
-const { useReactToPrint } = ReactToPrint;
+// Handle potential default export structure in CJS modules
+// @ts-ignore
+const useReactToPrint = ReactToPrint.useReactToPrint || ReactToPrint.default?.useReactToPrint || ReactToPrint.default;
 
 interface PrintPriceListDialogProps {
     open: boolean;

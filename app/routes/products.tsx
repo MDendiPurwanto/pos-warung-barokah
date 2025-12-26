@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight, Calendar, ArrowUpDown, AlertCircle } from "lucide-react";
+import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
@@ -80,6 +80,12 @@ export default function Products() {
     (product.barcode && product.barcode.includes(searchQuery))
   );
 
+  const getTimeSafe = (dateStr?: string) => {
+    if (!dateStr) return 0;
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
+  };
+
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "name-asc":
@@ -93,11 +99,11 @@ export default function Products() {
       case "expiry-asc":
         if (!a.expiry_date) return 1;
         if (!b.expiry_date) return -1;
-        return new Date(a.expiry_date).getTime() - new Date(b.expiry_date).getTime();
+        return getTimeSafe(a.expiry_date) - getTimeSafe(b.expiry_date);
       case "expiry-desc":
         if (!a.expiry_date) return 1;
         if (!b.expiry_date) return -1;
-        return new Date(b.expiry_date).getTime() - new Date(a.expiry_date).getTime();
+        return getTimeSafe(b.expiry_date) - getTimeSafe(a.expiry_date);
       default:
         return 0;
     }
@@ -112,14 +118,25 @@ export default function Products() {
   const totalProducts = products.length;
   const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
   const lowStockCount = products.filter((p) => p.stock < 10).length;
-  const expiredCount = products.filter(p => p.expiry_date && new Date(p.expiry_date) <= new Date()).length;
-  const expiringSoonCount = products.filter(p => {
-    if (!p.expiry_date) return false;
-    const expiry = new Date(p.expiry_date);
+
+  const getDaysUntilExpiry = (dateStr?: string) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return null;
     const today = new Date();
-    const diffTime = expiry.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 && diffDays <= 30; // 30 days window
+    today.setHours(0, 0, 0, 0);
+    const diffTime = date.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const expiredCount = products.filter(p => {
+    const days = getDaysUntilExpiry(p.expiry_date);
+    return days !== null && days <= 0;
+  }).length;
+
+  const expiringSoonCount = products.filter(p => {
+    const days = getDaysUntilExpiry(p.expiry_date);
+    return days !== null && days > 0 && days <= 30;
   }).length;
 
   const handleAddProduct = async () => {

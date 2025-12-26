@@ -126,4 +126,29 @@
   .tagsGrid {
     grid-template-columns: 1fr;
   }
+
+  .tagsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cannot use display: none because react-to-print requires the element to be rendered */
+.printContainer {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  z-index: -1000;
+}
+
+@media print {
+  .printContainer {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    opacity: 1;
+    display: block !important;
+  }
 }
