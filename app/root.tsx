@@ -17,6 +17,22 @@ import "./styles/theme.css";
 import { useColorScheme } from "@dazl/color-scheme/react";
 import favicon from "/favicon.svg";
 
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: "POS Warung Barokah" },
+    { name: "description", content: "Aplikasi Kasir POS Warung Barokah - Solusi manajemen warung yang mudah, cepat, dan modern." },
+    { property: "og:title", content: "POS Warung Barokah" },
+    { property: "og:description", content: "Kelola warung Anda dengan lebih efisien menggunakan POS Warung Barokah. Pencatatan transaksi, stok, dan laporan dalam satu aplikasi." },
+    { property: "og:image", content: "/favicon.svg" },
+    { property: "og:site_name", content: "POS Warung Barokah" },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "POS Warung Barokah" },
+    { name: "twitter:description", content: "Aplikasi Kasir POS Warung Barokah - Solusi manajemen warung yang mudah, cepat, dan modern." },
+    { name: "twitter:image", content: "/favicon.svg" },
+  ];
+};
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
