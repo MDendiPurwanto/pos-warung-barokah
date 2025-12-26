@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS products (
   name TEXT NOT NULL,
   price INTEGER NOT NULL CHECK (price >= 0),
   cost_price DECIMAL(12, 2) DEFAULT 0,
-  stock INTEGER NOT NULL CHECK (stock >= 0),
+  stock DECIMAL(12, 2) NOT NULL CHECK (stock >= 0),
+  unit TEXT DEFAULT 'pcs',
   barcode TEXT,
   expiry_date DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -16,6 +17,8 @@ CREATE TABLE IF NOT EXISTS products (
 -- For existing databases, run:
 -- ALTER TABLE products ADD COLUMN cost_price DECIMAL(12, 2) DEFAULT 0;
 -- ALTER TABLE products ADD COLUMN expiry_date DATE;
+-- ALTER TABLE products ADD COLUMN unit TEXT DEFAULT 'pcs';
+-- ALTER TABLE products ALTER COLUMN stock TYPE DECIMAL(12, 2);
 
 -- Create transactions table
 CREATE TABLE IF NOT EXISTS transactions (

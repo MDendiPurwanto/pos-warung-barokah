@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   cost_price?: number;
   stock: number;
+  unit?: string;
   barcode?: string;
   expiry_date?: string;
 }

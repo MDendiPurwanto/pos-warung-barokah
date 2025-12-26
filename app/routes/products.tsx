@@ -48,7 +48,7 @@ export default function Products() {
   const [scannerMode, setScannerMode] = useState<'add' | 'edit'>('add');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
+  const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", unit: "pcs", barcode: "", expiryDate: "" });
   const [stockAdjustment, setStockAdjustment] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("name-asc");
@@ -152,14 +152,15 @@ export default function Products() {
         name: formData.name,
         price: parseFloat(formData.price),
         cost_price: parseFloat(formData.costPrice || "0"),
-        stock: parseInt(formData.stock),
+        stock: parseFloat(formData.stock),
+        unit: formData.unit || 'pcs',
         barcode: formData.barcode || undefined,
         expiry_date: formData.expiryDate || undefined,
       });
 
       await loadProducts();
       setIsAddDialogOpen(false);
-      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", unit: "pcs", barcode: "", expiryDate: "" });
 
       toast.success("Produk Ditambahkan", {
         description: `${newProduct.name} berhasil ditambahkan ke inventori`,
@@ -186,7 +187,8 @@ export default function Products() {
         name: formData.name,
         price: parseFloat(formData.price),
         cost_price: parseFloat(formData.costPrice || "0"),
-        stock: parseInt(formData.stock),
+        stock: parseFloat(formData.stock),
+        unit: formData.unit || 'pcs',
         barcode: formData.barcode || undefined,
         expiry_date: formData.expiryDate || undefined,
       });
@@ -194,7 +196,7 @@ export default function Products() {
       await loadProducts();
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", unit: "pcs", barcode: "", expiryDate: "" });
 
       toast.success("Produk Diperbarui", {
         description: "Informasi produk berhasil diperbarui",
@@ -296,6 +298,7 @@ export default function Products() {
       price: product.price.toString(),
       costPrice: (product.cost_price || 0).toString(),
       stock: product.stock.toString(),
+      unit: product.unit || "pcs",
       barcode: product.barcode || "",
       expiryDate: product.expiry_date || "",
     });
@@ -451,7 +454,7 @@ export default function Products() {
   };
 
   const openAddDialog = () => {
-    setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "", expiryDate: "" });
+    setFormData({ name: "", price: "", costPrice: "", stock: "", unit: "pcs", barcode: "", expiryDate: "" });
     setIsAddDialogOpen(true);
   };
 
@@ -628,7 +631,7 @@ export default function Products() {
                       <TableCell>{product.name}</TableCell>
                       <TableCell>{formatCurrency(product.price)}</TableCell>
                       <TableCell className={product.stock < 10 ? styles.lowStock : ""}>
-                        {product.stock} {product.stock < 10 && "⚠️"}
+                        {product.stock} {product.unit || 'pcs'} {product.stock < 10 && "⚠️"}
                       </TableCell>
                       <TableCell>
                         {product.expiry_date ? (
@@ -778,13 +781,33 @@ export default function Products() {
             </div>
             <div>
               <Label htmlFor="stock">Stok Awal *</Label>
-              <Input
-                id="stock"
-                type="number"
-                value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                placeholder="Contoh: 50"
-              />
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <Input
+                  id="stock"
+                  type="number"
+                  step="any"
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                  placeholder="0"
+                  style={{ flex: 1 }}
+                />
+                <select
+                  className={styles.searchInput} // reusing input style for simplicity
+                  style={{ width: '100px', height: '40px', padding: '0 10px', borderColor: 'var(--color-neutral-6)' }}
+                  value={formData.unit}
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                >
+                  <option value="pcs">Pcs</option>
+                  <option value="kg">Kg</option>
+                  <option value="gr">Gram</option>
+                  <option value="liter">Liter</option>
+                  <option value="ml">ml</option>
+                  <option value="box">Box</option>
+                  <option value="pack">Pack</option>
+                  <option value="lusin">Lusin</option>
+                  <option value="kodi">Kodi</option>
+                </select>
+              </div>
             </div>
             <div>
               <Label htmlFor="expiryDate">Tanggal Kedaluwarsa</Label>
@@ -869,13 +892,33 @@ export default function Products() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-stock">Stok *</Label>
-              <Input
-                id="edit-stock"
-                type="number"
-                value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-              />
+              <Label htmlFor="edit-stock">Stok</Label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <Input
+                  id="edit-stock"
+                  type="number"
+                  step="any"
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                  style={{ flex: 1 }}
+                />
+                <select
+                  className={styles.searchInput}
+                  style={{ width: '100px', height: '40px', padding: '0 10px', borderColor: 'var(--color-neutral-6)' }}
+                  value={formData.unit}
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                >
+                  <option value="pcs">Pcs</option>
+                  <option value="kg">Kg</option>
+                  <option value="gr">Gram</option>
+                  <option value="liter">Liter</option>
+                  <option value="ml">ml</option>
+                  <option value="box">Box</option>
+                  <option value="pack">Pack</option>
+                  <option value="lusin">Lusin</option>
+                  <option value="kodi">Kodi</option>
+                </select>
+              </div>
             </div>
             <div>
               <Label htmlFor="edit-expiryDate">Tanggal Kedaluwarsa</Label>

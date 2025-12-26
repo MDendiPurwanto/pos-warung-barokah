@@ -375,6 +375,11 @@
   .tableWrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    /* Ensure table doesn't force parent width overflow */
+    max-width: 100vw;
+    padding-bottom: var(--space-4);
+    /* Space for scrollbar */
   }
 
   .tableWrapper table {
@@ -448,6 +453,13 @@
     flex-direction: column;
     gap: var(--space-3);
     align-items: center;
+    padding-bottom: calc(var(--space-4) + 60px);
+    /* Add extra padding at bottom to avoid overlap with fixed bottom navigation if any, or browser UI */
+  }
+
+  .paginationControls {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 
