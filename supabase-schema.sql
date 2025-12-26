@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS products (
   id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
   name TEXT NOT NULL,
   price INTEGER NOT NULL CHECK (price >= 0),
+  cost_price INTEGER DEFAULT 0 CHECK (cost_price >= 0),
   stock INTEGER NOT NULL CHECK (stock >= 0),
   barcode TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   date TIMESTAMP WITH TIME ZONE NOT NULL,
   customer_name TEXT NOT NULL,
   total INTEGER NOT NULL CHECK (total >= 0),
+  profit INTEGER DEFAULT 0,
   items JSONB NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

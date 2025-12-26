@@ -46,7 +46,7 @@ export default function Products() {
   const [scannerMode, setScannerMode] = useState<'add' | 'edit'>('add');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const [formData, setFormData] = useState({ name: "", price: "", stock: "", barcode: "" });
+  const [formData, setFormData] = useState({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
   const [stockAdjustment, setStockAdjustment] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,13 +85,14 @@ export default function Products() {
       const newProduct = await ProductService.createProduct({
         name: formData.name,
         price: parseFloat(formData.price),
+        cost_price: parseFloat(formData.costPrice || "0"),
         stock: parseInt(formData.stock),
         barcode: formData.barcode || undefined,
       });
 
       await loadProducts();
       setIsAddDialogOpen(false);
-      setFormData({ name: "", price: "", stock: "", barcode: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
 
       toast.success("Produk Ditambahkan", {
         description: `${newProduct.name} berhasil ditambahkan ke inventori`,
@@ -117,6 +118,7 @@ export default function Products() {
       await ProductService.updateProduct(selectedProduct.id, {
         name: formData.name,
         price: parseFloat(formData.price),
+        cost_price: parseFloat(formData.costPrice || "0"),
         stock: parseInt(formData.stock),
         barcode: formData.barcode || undefined,
       });
@@ -124,7 +126,7 @@ export default function Products() {
       await loadProducts();
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-      setFormData({ name: "", price: "", stock: "", barcode: "" });
+      setFormData({ name: "", price: "", costPrice: "", stock: "", barcode: "" });
 
       toast.success("Produk Diperbarui", {
         description: "Informasi produk berhasil diperbarui",
@@ -175,8 +177,8 @@ export default function Products() {
   };
 
   const toggleProductSelection = (productId: string) => {
-    setSelectedProductIds(prev => 
-      prev.includes(productId) 
+    setSelectedProductIds(prev =>
+      prev.includes(productId)
         ? prev.filter(id => id !== productId)
         : [...prev, productId]
     );
@@ -224,6 +226,7 @@ export default function Products() {
     setFormData({
       name: product.name,
       price: product.price.toString(),
+      costPrice: (product.cost_price || 0).toString(),
       stock: product.stock.toString(),
       barcode: product.barcode || "",
     });
@@ -296,6 +299,7 @@ export default function Products() {
           // Expected columns: name, price, stock, barcode (optional)
           const name = row["name"] || row["Name"] || row["Product Name"] || row["Nama"];
           const price = parseFloat(row["price"] || row["Price"] || row["Harga"] || "0");
+          const costPrice = parseFloat(row["cost_price"] || row["Cost Price"] || row["Modal"] || "0");
           const stock = parseInt(row["stock"] || row["Stock"] || row["Stok"] || "0");
           const barcode = row["barcode"] || row["Barcode"] || "";
 
@@ -304,6 +308,7 @@ export default function Products() {
               id: `${Date.now()}-${index}`,
               name: String(name),
               price,
+              cost_price: costPrice,
               stock,
             });
             validCount++;
@@ -320,6 +325,7 @@ export default function Products() {
                 await ProductService.createProduct({
                   name: product.name,
                   price: product.price,
+                  cost_price: product.cost_price,
                   stock: product.stock,
                 });
               } catch (err) {
@@ -327,7 +333,7 @@ export default function Products() {
                 validCount--;
               }
             }
-            
+
             await loadProducts();
             toast.success("Import Berhasil", {
               description: `${validCount} produk berhasil diimport${errorCount > 0 ? `, ${errorCount} baris gagal` : ""}`,
@@ -441,8 +447,8 @@ export default function Products() {
             <h2 className={styles.productTitle}>Daftar Produk</h2>
             <div className={styles.productHeaderActions}>
               {products.length > 0 && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsPrintDialogOpen(true)}
                   className={styles.printButton}
                 >
@@ -451,8 +457,8 @@ export default function Products() {
                 </Button>
               )}
               {selectedProductIds.length > 0 && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsBulkDeleteDialogOpen(true)}
                   className={styles.bulkDeleteButton}
                 >
@@ -577,13 +583,23 @@ export default function Products() {
               />
             </div>
             <div>
-              <Label htmlFor="price">Harga (Rp) *</Label>
+              <Label htmlFor="price">Harga Jual (Rp) *</Label>
               <Input
                 id="price"
                 type="number"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                 placeholder="Contoh: 3500"
+              />
+            </div>
+            <div>
+              <Label htmlFor="costPrice">Harga Modal (Rp)</Label>
+              <Input
+                id="costPrice"
+                type="number"
+                value={formData.costPrice}
+                onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
+                placeholder="Contoh: 3000"
               />
             </div>
             <div>
@@ -652,12 +668,21 @@ export default function Products() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-price">Harga (Rp) *</Label>
+              <Label htmlFor="edit-price">Harga Jual (Rp) *</Label>
               <Input
                 id="edit-price"
                 type="number"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-costPrice">Harga Modal (Rp)</Label>
+              <Input
+                id="edit-costPrice"
+                type="number"
+                value={formData.costPrice}
+                onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
               />
             </div>
             <div>
@@ -796,7 +821,7 @@ export default function Products() {
       <PrintPriceTagsDialog
         open={isPrintDialogOpen}
         onOpenChange={setIsPrintDialogOpen}
-        products={selectedProductIds.length > 0 
+        products={selectedProductIds.length > 0
           ? products.filter(p => selectedProductIds.includes(p.id))
           : products}
       />

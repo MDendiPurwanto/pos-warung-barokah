@@ -55,6 +55,50 @@ export default function RiwayatPenjualan() {
         <h1 className={styles.title}>Riwayat Penjualan</h1>
       </header>
 
+      <div className={styles.statsGrid}>
+        <Card>
+          <CardContent className={styles.statContent}>
+            <div className={styles.statIconWrapper} style={{ backgroundColor: 'var(--color-emerald-3)' }}>
+              <DollarSign size={24} color="var(--color-emerald-11)" />
+            </div>
+            <div>
+              <p className={styles.statLabel}>Total Keuntungan</p>
+              <p className={styles.statValue} style={{ color: 'var(--color-emerald-11)' }}>
+                {formatCurrency(transactions.reduce((sum, t) => sum + (t.profit || 0), 0))}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className={styles.statContent}>
+            <div className={styles.statIconWrapper} style={{ backgroundColor: 'var(--color-blue-3)' }}>
+              <Receipt size={24} color="var(--color-blue-11)" />
+            </div>
+            <div>
+              <p className={styles.statLabel}>Total Penjualan</p>
+              <p className={styles.statValue}>
+                {formatCurrency(transactions.reduce((sum, t) => sum + t.total, 0))}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className={styles.statContent}>
+            <div className={styles.statIconWrapper} style={{ backgroundColor: 'var(--color-orange-3)' }}>
+              <Calendar size={24} color="var(--color-orange-11)" />
+            </div>
+            <div>
+              <p className={styles.statLabel}>Total Item Terjual</p>
+              <p className={styles.statValue}>
+                {transactions.reduce((sum, t) => sum + t.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0)}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className={styles.content}>
         {transactions.length === 0 ? (
           <Card className={styles.emptyState}>

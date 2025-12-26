@@ -6,6 +6,7 @@ export interface TransactionItem {
   productName: string;
   quantity: number;
   price: number;
+  costPrice?: number;
 }
 
 export interface Transaction {
@@ -13,6 +14,7 @@ export interface Transaction {
   date: string;
   customerName: string;
   total: number;
+  profit?: number;
   items: TransactionItem[];
 }
 
@@ -27,12 +29,13 @@ export async function getTransactions(): Promise<Transaction[]> {
     .order('date', { ascending: false });
 
   if (error) throw error;
-  
+
   return (data || []).map((row: any) => ({
     id: row.id,
     date: row.date,
     customerName: row.customer_name,
     total: row.total,
+    profit: row.profit,
     items: row.items as unknown as TransactionItem[]
   }));
 }
@@ -49,7 +52,7 @@ export async function getTransaction(id: string): Promise<Transaction | null> {
     .single();
 
   if (error) throw error;
-  
+
   if (!data) return null;
 
   return {
@@ -57,6 +60,7 @@ export async function getTransaction(id: string): Promise<Transaction | null> {
     date: data.date,
     customerName: data.customer_name,
     total: data.total,
+    profit: data.profit,
     items: data.items as unknown as TransactionItem[]
   };
 }
@@ -77,6 +81,7 @@ export async function createTransaction(transaction: Omit<Transaction, 'id'>): P
       date: transaction.date,
       customer_name: transaction.customerName,
       total: transaction.total,
+      profit: transaction.profit || 0,
       items: transaction.items as any
     }])
     .select()
@@ -89,6 +94,7 @@ export async function createTransaction(transaction: Omit<Transaction, 'id'>): P
     date: data.date,
     customerName: data.customer_name,
     total: data.total,
+    profit: data.profit,
     items: data.items as unknown as TransactionItem[]
   };
 }
