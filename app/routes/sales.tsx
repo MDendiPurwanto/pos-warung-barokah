@@ -34,15 +34,57 @@ export default function Sales() {
   const [pendingPrint, setPendingPrint] = useState<ReceiptData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
 
-  const categories = ["Semua", "Minuman", "Makanan", "Sembako", "Rokok", "Lainnya"];
+  const categories = ["Semua", "Minuman", "Makanan", "Sembako", "Rokok", "Obat", "Lainnya"];
 
   // Helper to categorize products on the fly (since data doesn't have it yet)
   const getProductCategory = (name: string): string => {
     const n = name.toLowerCase();
+    // Cek Rokok dulu karena ada kata "Garam" yang bisa bentrok dengan Sembako
+    if (
+      n.includes("rokok") ||
+      n.includes("surya") ||
+      n.includes("sampoerna") ||
+      n.includes("sampurna") ||
+      n.includes("gudang garam") ||
+      n.includes("kretek") ||
+      n.includes("filter") ||
+      n.includes("djaja") ||
+      n.includes("djarum") ||
+      n.includes("magnum") ||
+      n.includes("ji sam soe") ||
+      n.includes("ares") ||
+      n.includes("layar") ||
+      n.includes("sriwidary") ||
+      n.includes("dji samsu")
+    ) return "Rokok";
+
+    // Cek Obat-obatan/Minyak Angin agar tidak masuk Sembako (Minyak Goreng)
+    if (
+      n.includes("minyak angin") ||
+      n.includes("kayu putih") ||
+      n.includes("kapak") ||
+      n.includes("lang") ||
+      n.includes("1001") ||
+      n.includes("i00i") ||
+      n.includes("vicks") ||
+      n.includes("balsem") ||
+      n.includes("obat") ||
+      n.includes("puyer") ||
+      n.includes("paracetamol") ||
+      n.includes("panadol") ||
+      n.includes("bodrex") ||
+      n.includes("promag") ||
+      n.includes("freshCare") ||
+      n.includes("freshcare") ||
+      n.includes("larutan") ||
+      n.includes("angin") ||
+      n.includes("Tolak")
+    ) return "Obat";
+
     if (n.includes("aqua") || n.includes("teh") || n.includes("kopi") || n.includes("minum") || n.includes("susu") || n.includes("cola")) return "Minuman";
-    if (n.includes("indomie") || n.includes("snack") || n.includes("biskuit") || n.includes("roti") || n.includes("telur")) return "Makanan";
-    if (n.includes("beras") || n.includes("minyak") || n.includes("gula") || n.includes("garam") || n.includes("tepung")) return "Sembako";
-    if (n.includes("rokok") || n.includes("surya") || n.includes("sampoerna") || n.includes("gudang garam")) return "Rokok";
+    if (n.includes("indomie") || n.includes("snack") || n.includes("biskuit") || n.includes("roti") || n.includes("Mie Goreng") || n.includes("Sedap")) return "Makanan";
+    if (n.includes("beras") || n.includes("minyak") || n.includes("gula") || n.includes("garam") || n.includes("tepung") || n.includes("goreng") || n.includes("gas") || n.includes("kecap") || n.includes("telur") || n.includes("telur")) return "Sembako";
+
     return "Lainnya";
   };
 
