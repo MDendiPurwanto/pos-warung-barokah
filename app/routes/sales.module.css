@@ -223,6 +223,9 @@
 .rightPanel {
   position: sticky;
   top: var(--space-6);
+  max-height: calc(100vh - var(--space-6) * 2 - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
 .cartSection {
@@ -230,6 +233,9 @@
   border-radius: var(--radius-4);
   box-shadow: var(--shadow-3);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
 }
 
 .cartHeader {
@@ -254,8 +260,9 @@
 
 .cartContent {
   padding: var(--space-4);
-  max-height: 400px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 100px;
 }
 
 .emptyCart {
@@ -375,6 +382,8 @@
 .cartFooter {
   border-top: 1px solid var(--color-neutral-6);
   padding: var(--space-4);
+  overflow-y: auto;
+  background: var(--color-neutral-1);
 }
 
 .totalRow {
@@ -449,13 +458,14 @@
 
 .quickAmounts {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-2);
   margin-bottom: var(--space-3);
 }
 
 .quickAmountButton {
-  padding: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-0);
   background: var(--color-neutral-1);
   border: 1px solid var(--color-neutral-6);
   border-radius: var(--radius-2);
@@ -572,17 +582,17 @@
 .numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  margin-bottom: var(--space-3);
+  gap: 6px;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
 .numpadKey {
-  padding: var(--space-3);
+  padding: 8px;
   background: var(--color-neutral-1);
   border: 1px solid var(--color-neutral-6);
   border-radius: var(--radius-2);
-  font: var(--font-body);
+  font-size: var(--font-size-1);
   font-weight: 700;
   color: var(--color-neutral-12);
   cursor: pointer;
