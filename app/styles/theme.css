@@ -9,35 +9,35 @@ html {
 }
 
 html {
-  /* Neutral colors - Clean, light background with deep text */
-  --color-neutral-1: var(--gray-1);
-  --color-neutral-2: var(--gray-2);
-  --color-neutral-3: var(--gray-3);
-  --color-neutral-4: var(--gray-4);
-  --color-neutral-5: var(--gray-5);
-  --color-neutral-6: var(--gray-6);
-  --color-neutral-7: var(--gray-7);
-  --color-neutral-8: var(--gray-8);
-  --color-neutral-9: var(--gray-9);
-  --color-neutral-10: var(--gray-10);
-  --color-neutral-11: var(--gray-11);
-  --color-neutral-12: var(--gray-12);
-  --color-neutral-contrast: var(--gray-contrast);
+  /* Neutral colors - Warmer, softer sand tones (Premium & Eye-friendly) */
+  --color-neutral-1: var(--sand-1);
+  --color-neutral-2: var(--sand-2);
+  --color-neutral-3: var(--sand-3);
+  --color-neutral-4: var(--sand-4);
+  --color-neutral-5: var(--sand-5);
+  --color-neutral-6: var(--sand-6);
+  --color-neutral-7: var(--sand-7);
+  --color-neutral-8: var(--sand-8);
+  --color-neutral-9: var(--sand-9);
+  --color-neutral-10: var(--sand-10);
+  --color-neutral-11: var(--sand-11);
+  --color-neutral-12: var(--sand-12);
+  --color-neutral-contrast: var(--sand-contrast);
 
-  /* Accent colors - Soft blue for CTAs and interactive elements */
-  --color-accent-1: var(--blue-1);
-  --color-accent-2: var(--blue-2);
-  --color-accent-3: var(--blue-3);
-  --color-accent-4: var(--blue-4);
-  --color-accent-5: var(--blue-5);
-  --color-accent-6: var(--blue-6);
-  --color-accent-7: var(--blue-7);
-  --color-accent-8: var(--blue-8);
-  --color-accent-9: var(--blue-9);
-  --color-accent-10: var(--blue-10);
-  --color-accent-11: var(--blue-11);
-  --color-accent-12: var(--blue-12);
-  --color-accent-contrast: var(--blue-contrast);
+  /* Accent colors - Sophisticated Indigo (Softer than electric blue) */
+  --color-accent-1: var(--indigo-1);
+  --color-accent-2: var(--indigo-2);
+  --color-accent-3: var(--indigo-3);
+  --color-accent-4: var(--indigo-4);
+  --color-accent-5: var(--indigo-5);
+  --color-accent-6: var(--indigo-6);
+  --color-accent-7: var(--indigo-7);
+  --color-accent-8: var(--indigo-8);
+  --color-accent-9: var(--indigo-9);
+  --color-accent-10: var(--indigo-10);
+  --color-accent-11: var(--indigo-11);
+  --color-accent-12: var(--indigo-12);
+  --color-accent-contrast: var(--indigo-contrast);
 
   /* Error colors */
   --color-error-1: var(--red-1);
@@ -69,18 +69,18 @@ html {
   --color-success-12: var(--green-12);
   --color-success-contrast: var(--green-contrast);
 
-  /* Brand color - Calm teal for main branding */
-  --color-brand-1: var(--teal-1);
-  --color-brand-2: var(--teal-2);
-  --color-brand-3: var(--teal-3);
-  --color-brand-4: var(--teal-4);
-  --color-brand-5: var(--teal-5);
-  --color-brand-6: var(--teal-6);
-  --color-brand-7: var(--teal-7);
-  --color-brand-8: var(--teal-8);
-  --color-brand-9: var(--teal-9);
-  --color-brand-10: var(--teal-10);
-  --color-brand-11: var(--teal-11);
-  --color-brand-12: var(--teal-12);
-  --color-brand-contrast: var(--teal-contrast);
+  /* Brand color - Natural Jade green (Calm and professional) */
+  --color-brand-1: var(--jade-1);
+  --color-brand-2: var(--jade-2);
+  --color-brand-3: var(--jade-3);
+  --color-brand-4: var(--jade-4);
+  --color-brand-5: var(--jade-5);
+  --color-brand-6: var(--jade-6);
+  --color-brand-7: var(--jade-7);
+  --color-brand-8: var(--jade-8);
+  --color-brand-9: var(--jade-9);
+  --color-brand-10: var(--jade-10);
+  --color-brand-11: var(--jade-11);
+  --color-brand-12: var(--jade-12);
+  --color-brand-contrast: var(--jade-contrast);
 }
