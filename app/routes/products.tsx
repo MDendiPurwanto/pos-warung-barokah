@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { ArrowLeft, Plus, Package, TrendingDown, DollarSign, Edit, Trash2, PackagePlus, Minus, Upload, ScanBarcode, Barcode, Printer, ChevronLeft, ChevronRight, AlertCircle, FileDown, Settings } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
@@ -38,6 +38,7 @@ import styles from "./products.module.css";
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -464,29 +465,38 @@ export default function Products() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <div className={styles.headerLeft}>
-            <Link to="/" className={styles.backButton}>
-              <ArrowLeft style={{ width: 20, height: 20 }} />
-              Kembali
-            </Link>
-            <h1 className={styles.title}>Kelola Produk & Stok</h1>
+          <div className={styles.headerTopRow}>
+            <div className={styles.headerLeftCol}>
+              <Link to="/" className={styles.backButton} title="Kembali ke Dashboard">
+                <ArrowLeft style={{ width: 20, height: 20 }} />
+                <span>Kembali</span>
+              </Link>
+            </div>
+
+            <div className={styles.headerCenterCol}>
+              <h1 className={styles.title}>Kelola Produk & Stok</h1>
+            </div>
+
+            <div className={styles.headerRightCol}>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsSettingsOpen(true)}
+                title="Pengaturan & Opsi Lainnya"
+              >
+                <Settings style={{ width: 20, height: 20 }} />
+              </Button>
+            </div>
           </div>
+
           <div className={styles.headerActions}>
-            <RefreshButton />
-            <FullscreenToggle />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xls"
-              onChange={handleFileUpload}
-              style={{ display: "none" }}
-            />
-            <Button variant="outline" onClick={downloadTemplate} className={styles.templateButton}>
-              Unduh Template
+            <Button onClick={() => window.location.reload()} variant="outline">
+              <RefreshButton iconOnly />
+              Segarkan
             </Button>
-            <Button variant="outline" onClick={handleImportClick} className={styles.importButton}>
-              <Upload style={{ width: 20, height: 20 }} />
-              Import Excel
+            <Button onClick={() => document.documentElement.requestFullscreen()} variant="outline">
+              <FullscreenToggle iconOnly />
+              Layar Penuh
             </Button>
             <Button onClick={openAddDialog} className={styles.addButton}>
               <Plus style={{ width: 20, height: 20 }} />
@@ -495,6 +505,43 @@ export default function Products() {
           </div>
         </div>
       </header>
+
+      {/* Settings Dialog */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Opsi Produk</DialogTitle>
+            <DialogDescription>
+              Aksi tambahan untuk pengelolaan produk
+            </DialogDescription>
+          </DialogHeader>
+          <div className={styles.settingsGrid}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
+            <Button variant="outline" onClick={downloadTemplate} className={styles.settingsButton}>
+              <FileDown style={{ width: 18, height: 18 }} className="mr-2" />
+              Unduh Template Excel
+            </Button>
+            <Button variant="outline" onClick={handleImportClick} className={styles.settingsButton}>
+              <Upload style={{ width: 18, height: 18 }} className="mr-2" />
+              Import dari Excel
+            </Button>
+            <Button variant="outline" onClick={() => setIsPrintDialogOpen(true)} className={styles.settingsButton}>
+              <Printer style={{ width: 18, height: 18 }} className="mr-2" />
+              Cetak Tag Harga
+            </Button>
+            <Button variant="outline" onClick={() => setIsPriceListDialogOpen(true)} className={styles.settingsButton}>
+              <Printer style={{ width: 18, height: 18 }} className="mr-2" />
+              Cetak Daftar Harga
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <main className={styles.main}>
         <div className={styles.statsGrid}>
@@ -526,7 +573,7 @@ export default function Products() {
         <div className={styles.productSection}>
           <div className={styles.productHeader}>
             <div className={styles.productHeaderLeft}>
-              <h2 className={styles.productTitle}>Daftar Produk</h2>
+              {/* <h2 className={styles.productTitle}>Daftar Produk</h2> */}
               <div className={styles.searchContainer}>
                 <Input
                   placeholder="Cari produk..."
@@ -554,26 +601,6 @@ export default function Products() {
               </div>
             </div>
             <div className={styles.productHeaderActions}>
-              {products.length > 0 && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsPrintDialogOpen(true)}
-                    className={styles.printButton}
-                  >
-                    <Printer style={{ width: 18, height: 18 }} />
-                    Cetak Tag Harga
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsPriceListDialogOpen(true)}
-                    className={styles.printButton}
-                  >
-                    <Printer style={{ width: 18, height: 18 }} />
-                    Cetak Daftar Harga
-                  </Button>
-                </>
-              )}
               {selectedProductIds.length > 0 && (
                 <Button
                   variant="outline"

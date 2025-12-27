@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { Maximize, Minimize } from "lucide-react";
 import { Button } from "./button/button";
 
-export function FullscreenToggle() {
+interface FullscreenToggleProps {
+    iconOnly?: boolean;
+}
+
+export function FullscreenToggle({ iconOnly }: FullscreenToggleProps) {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     useEffect(() => {
@@ -43,9 +47,10 @@ export function FullscreenToggle() {
             onClick={toggleFullscreen}
             title={isFullscreen ? "Keluar Fullscreen" : "Masuk Fullscreen"}
             aria-label="Toggle Fullscreen"
+            size={iconOnly ? "icon" : "default"}
         >
             {isFullscreen ? <Minimize style={{ width: 18, height: 18 }} /> : <Maximize style={{ width: 18, height: 18 }} />}
-            <span>{isFullscreen ? "Keluar" : "Layar Penuh"}</span>
+            {!iconOnly && <span>{isFullscreen ? "Keluar" : "Layar Penuh"}</span>}
         </Button>
     );
 }

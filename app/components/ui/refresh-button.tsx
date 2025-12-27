@@ -5,7 +5,7 @@ interface RefreshButtonProps {
     onClick?: () => void;
 }
 
-export function RefreshButton({ onClick }: RefreshButtonProps) {
+export function RefreshButton({ onClick, iconOnly }: RefreshButtonProps & { iconOnly?: boolean }) {
     const handleRefresh = () => {
         // Store fullscreen state to attempt restore after refresh
         if (document.fullscreenElement) {
@@ -27,9 +27,10 @@ export function RefreshButton({ onClick }: RefreshButtonProps) {
             className="gap-2"
             onClick={handleRefresh}
             title="Segarkan Halaman"
+            size={iconOnly ? "icon" : "default"}
         >
             <RotateCw style={{ width: 16, height: 16 }} />
-            <span>Segarkan</span>
+            {!iconOnly && <span>Segarkan</span>}
         </Button>
     );
 }

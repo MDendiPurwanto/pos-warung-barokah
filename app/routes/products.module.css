@@ -6,22 +6,50 @@
 .header {
   background: var(--color-neutral-1);
   border-bottom: 1px solid var(--color-neutral-6);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-5);
   box-shadow: var(--shadow-1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .headerContent {
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.headerTopRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+}
+
+.headerLeftCol {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.headerCenterCol {
+  display: flex;
+  justify-content: center;
+}
+
+.headerRightCol {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .headerLeft {
@@ -31,6 +59,10 @@
 }
 
 .backButton {
+  /* Reset absolute positioning */
+  position: static;
+  transform: none;
+
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -48,6 +80,7 @@
 .backButton:hover {
   background: var(--color-neutral-3);
   border-color: var(--color-neutral-7);
+  color: var(--color-neutral-12);
 }
 
 .title {
@@ -60,6 +93,40 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+}
+
+.headerTitleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font: var(--font-heading);
+  font-size: var(--font-size-3);
+  color: var(--color-neutral-12);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font: var(--font-caption);
+  color: var(--color-neutral-10);
+  margin: 0;
+}
+
+.actionGroupIcon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.actionSep {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-neutral-6);
+  margin: 0 var(--space-1);
 }
 
 .addButton,
@@ -502,7 +569,15 @@
   font-weight: 700;
 }
 
-.expiringSoonDate {
-  color: var(--color-warning-9);
-  font-weight: 600;
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.settingsButton {
+  justify-content: flex-start;
+  height: auto;
+  padding: var(--space-3);
 }
