@@ -34,7 +34,7 @@
 
 .content {
   padding: var(--space-4);
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -144,19 +144,19 @@
   .title {
     font-size: 1.25rem;
   }
-  
+
   .transactionId {
     font-size: 1.125rem;
   }
-  
+
   .summaryValue {
     font-size: 1rem;
   }
-  
+
   .changeValue {
     font-size: 1.25rem;
   }
-  
+
   .tableWrapper {
     font-size: 0.875rem;
   }
