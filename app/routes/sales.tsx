@@ -109,7 +109,7 @@ export default function Sales() {
     try {
       setIsLoading(true);
       const data = await ProductService.getProducts();
-      setProducts(data);
+      setProducts([...data]);
     } catch (error) {
       toast.error("Gagal Memuat Produk", {
         description: "Terjadi kesalahan saat memuat data produk",

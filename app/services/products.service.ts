@@ -15,7 +15,7 @@ export interface Product {
 export async function getProducts(): Promise<Product[]> {
   if (!supabase) {
     console.warn('Supabase not configured, using mock data');
-    return mockProducts;
+    return [...mockProducts];
   }
 
   const { data, error } = await supabase
@@ -128,6 +128,7 @@ export async function updateProductStock(id: string, quantity: number): Promise<
   });
 
   if (error) {
+    console.error('Failed to update stock via RPC, trying fallback:', error);
     // Fallback to manual update if RPC doesn't exist
     const product = await getProduct(id);
     if (product) {

@@ -38,7 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date DESC);
 CREATE INDEX IF NOT EXISTS idx_transactions_customer ON transactions(customer_name);
 
 -- Create function to update product stock (optional, for atomic operations)
-CREATE OR REPLACE FUNCTION update_product_stock(product_id TEXT, quantity_change INTEGER)
+CREATE OR REPLACE FUNCTION update_product_stock(product_id TEXT, quantity_change DECIMAL(12, 2))
 RETURNS VOID AS $$
 BEGIN
   UPDATE products
