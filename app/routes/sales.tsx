@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer, Search, Wallet, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ShoppingCart, ScanBarcode, Plus, Minus, X, Package, Printer, Search, Wallet, CheckCircle2, Keyboard } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "~/components/ui/dialog/dialog";
 import { Button } from "~/components/ui/button/button";
 import { Input } from "~/components/ui/input/input";
@@ -33,6 +33,12 @@ export default function Sales() {
   const [showPrinterDialog, setShowPrinterDialog] = useState(false);
   const [pendingPrint, setPendingPrint] = useState<ReceiptData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
+
+  // Manual Input State
+  const [isManualInputOpen, setIsManualInputOpen] = useState(false);
+  const [manualItemName, setManualItemName] = useState("");
+  const [manualItemPrice, setManualItemPrice] = useState("");
+  const [manualItemQty, setManualItemQty] = useState("1");
 
   const categories = ["Semua", "Minuman", "Makanan", "Sembako", "Rokok", "Obat", "Lainnya"];
 
@@ -364,6 +370,56 @@ export default function Sales() {
     }
   };
 
+  const handleManualSubmit = () => {
+    if (!manualItemName || !manualItemPrice) {
+      toast.error("Data Tidak Lengkap", {
+        description: "Mohon isi nama dan harga produk",
+      });
+      return;
+    }
+
+    const price = parseFloat(manualItemPrice);
+    const qty = parseInt(manualItemQty) || 1;
+
+    if (isNaN(price) || price < 0) {
+      toast.error("Harga Tidak Valid", {
+        description: "Harga harus berupa angka positif",
+      });
+      return;
+    }
+
+    const manualProduct: Product = {
+      id: `manual-${Date.now()}`, // Temporary ID
+      name: manualItemName,
+      price: price,
+      stock: 999999, // Infinite stock for manual items
+      barcode: '',
+    };
+
+    // Add to cart with specific quantity
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.product.id === manualProduct.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.product.id === manualProduct.id
+            ? { ...item, quantity: item.quantity + qty }
+            : item
+        );
+      }
+      return [...prevCart, { product: manualProduct, quantity: qty }];
+    });
+
+    toast.success("Produk Manual Ditambahkan", {
+      description: `${manualItemName} berhasil ditambahkan`,
+    });
+
+    // Reset form
+    setManualItemName("");
+    setManualItemPrice("");
+    setManualItemQty("1");
+    setIsManualInputOpen(false);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -402,6 +458,10 @@ export default function Sales() {
                   </button>
                 )}
               </div>
+              <Button onClick={() => setIsManualInputOpen(true)} className={styles.scanButton} variant="secondary">
+                <Keyboard className={styles.scanIcon} />
+                Manual
+              </Button>
               <Button onClick={handleScan} className={styles.scanButton} variant="secondary">
                 <ScanBarcode className={styles.scanIcon} />
                 Kamera
@@ -640,6 +700,69 @@ export default function Sales() {
         }}
         onConnected={handlePrinterConnected}
       />
+      {/* Manual Product Input Dialog */}
+      <Dialog open={isManualInputOpen} onOpenChange={setIsManualInputOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Input Produk Manual</DialogTitle>
+            <DialogDescription>
+              Masukkan detail produk yang tidak terdaftar di sistem.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="name" className="text-right font-medium">
+                Nama Item
+              </label>
+              <Input
+                id="name"
+                value={manualItemName}
+                onChange={(e) => setManualItemName(e.target.value)}
+                className="col-span-3"
+                placeholder="Contoh: Jasa Service"
+                autoFocus
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="price" className="text-right font-medium">
+                Harga
+              </label>
+              <Input
+                id="price"
+                type="number"
+                value={manualItemPrice}
+                onChange={(e) => setManualItemPrice(e.target.value)}
+                className="col-span-3"
+                placeholder="0"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="qty" className="text-right font-medium">
+                Jumlah
+              </label>
+              <Input
+                id="qty"
+                type="number"
+                value={manualItemQty}
+                onChange={(e) => setManualItemQty(e.target.value)}
+                className="col-span-3"
+                placeholder="1"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsManualInputOpen(false)}>
+              Batal
+            </Button>
+            <Button onClick={handleManualSubmit}>
+              <Plus className="mr-2 h-4 w-4" />
+              Masuk Keranjang
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
