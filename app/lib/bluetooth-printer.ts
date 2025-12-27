@@ -63,11 +63,49 @@ class BluetoothPrinterService {
 
       device.addEventListener('gattserverdisconnected', this.onDisconnected);
 
-      return await this.startConnection(device);
+      const connectedDevice = await this.startConnection(device);
+
+      // Save for auto-reconnect
+      try {
+        localStorage.setItem('lastPrinterId', device.id);
+      } catch (e) {
+        console.warn('Gagal menyimpan ID printer ke storage', e);
+      }
+
+      return connectedDevice;
     } catch (error) {
       console.error('Bluetooth connection error:', error);
       throw error;
     }
+  }
+
+  // Attempt to reconnect to a previously permitted device without user gesture
+  async tryAutoConnect(): Promise<boolean> {
+    try {
+      // @ts-ignore - getDevices is not yet in all TS definitions for web bluetooth
+      if (typeof navigator === 'undefined' || !navigator.bluetooth || !navigator.bluetooth.getDevices) {
+        return false;
+      }
+
+      const lastId = localStorage.getItem('lastPrinterId');
+      if (!lastId) return false;
+
+      // @ts-ignore
+      const devices = await navigator.bluetooth.getDevices();
+      // @ts-ignore
+      const device = devices.find(d => d.id === lastId);
+
+      if (device) {
+        console.log('Found authorized device:', device.name, 'Attempting auto-reconnect...');
+        device.addEventListener('gattserverdisconnected', this.onDisconnected);
+        await this.startConnection(device);
+        console.log('Auto-reconnect successful');
+        return true;
+      }
+    } catch (error) {
+      console.error('Auto-connect failed', error);
+    }
+    return false;
   }
 
   private onDisconnected = async (event: Event) => {
@@ -143,6 +181,7 @@ class BluetoothPrinterService {
   }
 
   async disconnect(): Promise<void> {
+    localStorage.removeItem('lastPrinterId');
     if (this.device?.device) {
       this.device.device.removeEventListener('gattserverdisconnected', this.onDisconnected);
     }

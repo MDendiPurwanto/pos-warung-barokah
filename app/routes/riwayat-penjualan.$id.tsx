@@ -5,7 +5,6 @@ import * as TransactionService from '../services/transactions.service';
 import type { Transaction } from '../services/transactions.service';
 import { Button } from '../components/ui/button/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table/table';
 import { toast } from 'sonner';
 import { BluetoothPrinterDialog } from '../components/bluetooth-printer-dialog';
 import { bluetoothPrinterService } from '../lib/bluetooth-printer';
@@ -22,6 +21,15 @@ export default function RiwayatPenjualanDetail() {
   useEffect(() => {
     if (id) {
       loadTransaction(id);
+    }
+
+    // Auto-reconnect printer if needed
+    if (!bluetoothPrinterService.isConnected()) {
+      bluetoothPrinterService.tryAutoConnect().then(connected => {
+        if (connected) {
+          toast.success("Printer Terhubung Kembali");
+        }
+      });
     }
   }, [id]);
 
@@ -45,9 +53,10 @@ export default function RiwayatPenjualanDetail() {
 
   const formatDateTime = (dateString: string) => {
     return new Intl.DateTimeFormat('id-ID', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(dateString));
@@ -56,7 +65,6 @@ export default function RiwayatPenjualanDetail() {
   const handlePrint = async () => {
     if (!transaction) return;
 
-    // Check if printer is already connected
     if (!bluetoothPrinterService.isConnected()) {
       setShowPrinterDialog(true);
       return;
@@ -114,17 +122,13 @@ export default function RiwayatPenjualanDetail() {
         <header className={styles.header}>
           <Link to="/riwayat-penjualan">
             <Button variant="outline" size="icon">
-              <ChevronLeft />
+              <ChevronLeft size={24} />
             </Button>
           </Link>
           <h1 className={styles.title}>Detail Transaksi</h1>
         </header>
         <div className={styles.content}>
-          <Card>
-            <CardContent className={styles.notFound}>
-              <p>Memuat transaksi...</p>
-            </CardContent>
-          </Card>
+          <p className={styles.loadingText}>Memuat...</p>
         </div>
       </div>
     );
@@ -136,17 +140,13 @@ export default function RiwayatPenjualanDetail() {
         <header className={styles.header}>
           <Link to="/riwayat-penjualan">
             <Button variant="outline" size="icon">
-              <ChevronLeft />
+              <ChevronLeft size={24} />
             </Button>
           </Link>
           <h1 className={styles.title}>Detail Transaksi</h1>
         </header>
         <div className={styles.content}>
-          <Card>
-            <CardContent className={styles.notFound}>
-              <p>Transaksi tidak ditemukan</p>
-            </CardContent>
-          </Card>
+          <p className={styles.notFound}>Transaksi tidak ditemukan</p>
         </div>
       </div>
     );
@@ -155,92 +155,69 @@ export default function RiwayatPenjualanDetail() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <Link to="/riwayat-penjualan">
-            <Button variant="outline" size="icon">
-              <ChevronLeft />
-            </Button>
-          </Link>
-          <h1 className={styles.title}>Detail Transaksi</h1>
-        </div>
-        <Button
-          onClick={handlePrint}
-          disabled={isPrinting}
-          variant="default"
-          className={styles.printButton}
-        >
-          <Printer />
-          {isPrinting ? 'Mencetak...' : 'Cetak Struk'}
-        </Button>
+        <Link to="/riwayat-penjualan">
+          <Button variant="outline" size="icon" className={styles.backButton}>
+            <ChevronLeft size={28} />
+          </Button>
+        </Link>
+        <h1 className={styles.title}>Detail Transaksi</h1>
       </header>
 
       <div className={styles.content}>
+        {/* Transaction Header Card */}
         <Card className={styles.infoCard}>
-          <CardHeader>
-            <div className={styles.transactionHeader}>
-              <Receipt className={styles.receiptIcon} />
-              <div>
-                <CardTitle className={styles.transactionId}>
-                  {transaction.id}
-                </CardTitle>
-                <div className={styles.transactionDate}>
-                  <Calendar size={14} />
-                  <span>{formatDateTime(transaction.date)}</span>
-                </div>
-              </div>
+          <CardContent className={styles.infoContent}>
+            <div className={styles.dateInfo}>
+              <Calendar size={20} className={styles.iconDim} />
+              <span>{formatDateTime(transaction.date)}</span>
             </div>
-          </CardHeader>
-        </Card>
-
-        <Card className={styles.itemsCard}>
-          <CardHeader>
-            <CardTitle>Daftar Produk</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={styles.tableWrapper}>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Produk</TableHead>
-                    <TableHead className={styles.rightAlign}>Harga</TableHead>
-                    <TableHead className={styles.centerAlign}>Jumlah</TableHead>
-                    <TableHead className={styles.rightAlign}>Subtotal</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transaction.items.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className={styles.productName}>
-                        {item.productName}
-                      </TableCell>
-                      <TableCell className={styles.rightAlign}>
-                        {formatCurrency(item.price)}
-                      </TableCell>
-                      <TableCell className={styles.centerAlign}>
-                        {item.quantity}
-                      </TableCell>
-                      <TableCell className={styles.rightAlign}>
-                        {formatCurrency(item.price * item.quantity)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className={styles.idInfo}>
+              <Receipt size={20} className={styles.iconDim} />
+              <span>ID: {transaction.id}</span>
             </div>
           </CardContent>
         </Card>
 
+        {/* Item List */}
+        <div className={styles.itemsList}>
+          <h2 className={styles.sectionTitle}>Daftar Belanja</h2>
+          {transaction.items.map((item, index) => (
+            <Card key={index} className={styles.itemCard}>
+              <CardContent className={styles.itemContent}>
+                <div className={styles.itemMain}>
+                  <span className={styles.itemName}>{item.productName}</span>
+                  <span className={styles.itemPriceSingle}>{item.quantity} x {formatCurrency(item.price)}</span>
+                </div>
+                <div className={styles.itemTotal}>
+                  {formatCurrency(item.price * item.quantity)}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Summary Card */}
         <Card className={styles.summaryCard}>
           <CardContent className={styles.summaryContent}>
-            <div className={styles.summaryRow}>
-              <span className={styles.summaryLabel}>Total Belanja:</span>
-              <span className={styles.summaryValue}>
-                {formatCurrency(transaction.total)}
-              </span>
-            </div>
-
+            <span className={styles.summaryLabel}>Total Harga</span>
+            <span className={styles.summaryValue}>
+              {formatCurrency(transaction.total)}
+            </span>
           </CardContent>
         </Card>
+
+        {/* Floating/Fixed Print Button Area */}
+        <div className={styles.actionArea}>
+          <Button
+            onClick={handlePrint}
+            disabled={isPrinting}
+            size="lg"
+            className={styles.printButton}
+          >
+            <Printer size={24} />
+            {isPrinting ? 'Mencetak...' : 'Cetak Struk'}
+          </Button>
+        </div>
       </div>
 
       <BluetoothPrinterDialog
