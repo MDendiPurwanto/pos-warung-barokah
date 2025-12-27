@@ -331,13 +331,14 @@ class BluetoothPrinterService {
 
     // Convert to Uint8Array and send
     const buffer = new Uint8Array(commands);
-    const chunkSize = 512;
+    // Reduced chunk size to 100 bytes to prevent buffer overflow on some Android devices/tablets
+    const chunkSize = 100;
 
     for (let i = 0; i < buffer.length; i += chunkSize) {
       const chunk = buffer.slice(i, i + chunkSize);
       await this.device.characteristic.writeValue(chunk);
-      // Small delay to prevent buffer overflow
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Consistent delay for stability
+      await new Promise(resolve => setTimeout(resolve, 80));
     }
   }
 
