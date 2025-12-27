@@ -130,28 +130,34 @@
 .searchInput {
   width: 100%;
   padding-left: calc(var(--space-3) + 24px) !important;
+  padding-right: 90px !important;
   font-size: var(--font-size-2);
 }
 
 .clearSearch {
   position: absolute;
-  right: var(--space-3);
-  background: var(--color-neutral-4);
-  border: none;
-  border-radius: var(--radius-round);
-  width: 20px;
-  height: 20px;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-6);
+  border-radius: var(--radius-2);
+  height: 32px;
+  padding: 0 var(--space-3);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--color-neutral-11);
+  font-size: var(--font-size-1);
+  font-weight: 500;
   transition: all 0.2s var(--ease);
+  z-index: 2;
 }
 
 .clearSearch:hover {
-  background: var(--color-neutral-6);
-  color: var(--color-neutral-12);
+  background: var(--color-error-3);
+  color: var(--color-error-11);
 }
 
 .scanButton {

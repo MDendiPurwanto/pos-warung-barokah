@@ -480,7 +480,7 @@ export default function Sales() {
                 />
                 {searchQuery && (
                   <button className={styles.clearSearch} onClick={() => setSearchQuery("")}>
-                    <X style={{ width: 16, height: 16 }} />
+                    Hapus
                   </button>
                 )}
               </div>
