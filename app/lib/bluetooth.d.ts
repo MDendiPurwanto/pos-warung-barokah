@@ -1,5 +1,5 @@
 // Web Bluetooth API type definitions
-interface BluetoothDevice {
+interface BluetoothDevice extends EventTarget {
   id: string;
   name?: string;
   gatt?: BluetoothRemoteGATTServer;
@@ -25,6 +25,7 @@ interface BluetoothRemoteGATTService {
   uuid: string;
   isPrimary: boolean;
   getCharacteristic(characteristic: BluetoothCharacteristicUUID): Promise<BluetoothRemoteGATTCharacteristic>;
+  getCharacteristics(characteristic?: BluetoothCharacteristicUUID): Promise<BluetoothRemoteGATTCharacteristic[]>;
 }
 
 interface BluetoothRemoteGATTCharacteristic {

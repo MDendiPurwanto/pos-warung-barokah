@@ -32,6 +32,7 @@ export default function Sales() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [showPrinterDialog, setShowPrinterDialog] = useState(false);
   const [pendingPrint, setPendingPrint] = useState<ReceiptData | null>(null);
+  const [lastReceipt, setLastReceipt] = useState<ReceiptData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
 
   // Manual Input State
@@ -243,54 +244,48 @@ export default function Sales() {
       }
 
       // Prepare receipt data
-      if (printReceipt) {
-        const receiptData: ReceiptData = {
-          storeName: 'TOKO SAYA',
-          storeAddress: 'Jl. Contoh No. 123, Jakarta',
-          transactionId: transaction.id,
-          date: new Date().toLocaleString('id-ID', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          }),
-          items: cart.map((item) => ({
-            name: item.product.name,
-            quantity: item.quantity,
-            price: item.product.price,
-            total: item.product.price * item.quantity
-          })),
-          subtotal: total,
-          total,
-          payment,
-          change,
-          paymentMethod: 'Tunai'
-        };
+      const receiptData: ReceiptData = {
+        storeName: 'TOKO BAROKAH',
+        storeAddress: 'Jl. Gunung Galunggung, RT.02/RW.07, Blubuk, Blukbuk, Kec. Dukuhwaru, Kabupaten Tegal, Jawa Tengah 52451',
+        headerNote: 'sedia Wifi Voucheran, Transfer max 500k, bayar top up listrik dan Sembako',
+        transactionId: transaction.id,
+        date: new Date().toLocaleString('id-ID', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        items: cart.map((item) => ({
+          name: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price,
+          total: item.product.price * item.quantity
+        })),
+        subtotal: total,
+        total,
+        payment,
+        change,
+        paymentMethod: 'Tunai'
+      };
 
-        // Check if printer is connected
-        if (bluetoothPrinterService.isConnected()) {
-          try {
-            await bluetoothPrinterService.printReceipt(receiptData);
-            toast.success("Transaksi Selesai & Struk Dicetak", {
-              description: `Total: Rp ${total.toLocaleString("id-ID")}`,
-            });
-          } catch (error) {
-            toast.warning("Transaksi Selesai", {
-              description: "Gagal mencetak struk. Total: Rp " + total.toLocaleString("id-ID"),
-            });
-          }
-        } else {
-          // Save for later and show printer dialog
-          setPendingPrint(receiptData);
-          setShowPrinterDialog(true);
-          toast.success("Transaksi Selesai", {
-            description: `Total: Rp ${total.toLocaleString("id-ID")}. Hubungkan printer untuk cetak struk.`,
+      setLastReceipt(receiptData);
+
+      // Auto print if connected
+      if (bluetoothPrinterService.isConnected()) {
+        try {
+          await bluetoothPrinterService.printReceipt(receiptData);
+          toast.success("Transaksi Selesai & Struk Dicetak", {
+            description: `Total: Rp ${total.toLocaleString("id-ID")}`,
+          });
+        } catch (error) {
+          toast.warning("Transaksi Selesai", {
+            description: "Gagal mencetak struk. Total: Rp " + total.toLocaleString("id-ID"),
           });
         }
       } else {
         toast.success("Transaksi Selesai", {
-          description: `Total: Rp ${total.toLocaleString("id-ID")}`,
+          description: `Total: Rp ${total.toLocaleString("id-ID")}. Gunakan tombol printer di atas untuk cetak manual.`,
         });
       }
 
@@ -302,6 +297,22 @@ export default function Sales() {
       toast.error("Gagal Menyimpan Transaksi", {
         description: "Terjadi kesalahan saat memproses transaksi",
       });
+    }
+  };
+
+  const handlePrintLastReceipt = async () => {
+    if (!lastReceipt) return;
+
+    if (bluetoothPrinterService.isConnected()) {
+      try {
+        await bluetoothPrinterService.printReceipt(lastReceipt);
+        toast.success("Struk Berhasil Dicetak");
+      } catch (error) {
+        toast.error("Gagal Mencetak Struk");
+      }
+    } else {
+      setPendingPrint(lastReceipt);
+      setShowPrinterDialog(true);
     }
   };
 
@@ -432,6 +443,18 @@ export default function Sales() {
             <h1 className={styles.title}>Kasir</h1>
           </div>
           <div className={styles.headerActions}>
+            {lastReceipt && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handlePrintLastReceipt}
+                title="Cetak Struk Terakhir"
+                className={styles.printLastButton}
+                style={{ marginRight: '8px' }}
+              >
+                <Printer style={{ width: 20, height: 20 }} />
+              </Button>
+            )}
             <RefreshButton />
             <FullscreenToggle />
           </div>
@@ -664,7 +687,7 @@ export default function Sales() {
                 <Button
                   size="lg"
                   disabled={!isPaymentSufficient()}
-                  onClick={() => completeSale(false)}
+                  onClick={() => completeSale(bluetoothPrinterService.isConnected())}
                   className={styles.finalizeButton}
                 >
                   <CheckCircle2 style={{ width: 24, height: 24 }} />

@@ -46,8 +46,8 @@ export default function RiwayatPenjualanDetail() {
   const formatDateTime = (dateString: string) => {
     return new Intl.DateTimeFormat('id-ID', {
       day: '2-digit',
-      month: 'long',
-      year: 'numeric',
+      month: '2-digit',
+      year: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(dateString));
@@ -71,8 +71,9 @@ export default function RiwayatPenjualanDetail() {
     setIsPrinting(true);
     try {
       const receiptData: ReceiptData = {
-        storeName: 'TOKO SAYA',
-        storeAddress: 'Jl. Contoh No. 123, Jakarta',
+        storeName: 'TOKO BAROKAH',
+        storeAddress: 'Jl. Gunung Galunggung, RT.02/RW.07, Blubuk, Blukbuk, Kec. Dukuhwaru, Kabupaten Tegal, Jawa Tengah 52451',
+        headerNote: 'sedia Wifi Voucheran, Transfer max 500k, bayar top up listrik dan Sembako',
         transactionId: transaction.id,
         date: formatDateTime(transaction.date),
         items: transaction.items.map(item => ({
@@ -89,7 +90,7 @@ export default function RiwayatPenjualanDetail() {
       };
 
       await bluetoothPrinterService.printReceipt(receiptData);
-      
+
       toast.success("Struk Berhasil Dicetak", {
         description: "Struk transaksi telah dicetak",
       });
@@ -162,7 +163,7 @@ export default function RiwayatPenjualanDetail() {
           </Link>
           <h1 className={styles.title}>Detail Transaksi</h1>
         </div>
-        <Button 
+        <Button
           onClick={handlePrint}
           disabled={isPrinting}
           variant="default"
