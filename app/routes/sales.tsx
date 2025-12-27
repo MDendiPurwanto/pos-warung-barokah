@@ -239,8 +239,11 @@ export default function Sales() {
       });
 
       // Update stock levels
+      // Update stock levels (only for real products)
       for (const item of cart) {
-        await ProductService.updateProductStock(item.product.id, item.quantity);
+        if (!item.product.id.startsWith('manual-')) {
+          await ProductService.updateProductStock(item.product.id, item.quantity);
+        }
       }
 
       // Prepare receipt data
