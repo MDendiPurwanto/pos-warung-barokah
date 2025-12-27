@@ -174,9 +174,15 @@ class BluetoothPrinterService {
 
     // Helper functions
     const addText = (text: string) => {
-      // Ensure we don't send weird characters, though standard ASCII is safest for basic printers
+      // Sanitize: Only allow safe ASCII (32-126) and Newline (10). 
+      // Replace others with '?' to prevent printer errors.
       for (let i = 0; i < text.length; i++) {
-        commands.push(text.charCodeAt(i));
+        const charCode = text.charCodeAt(i);
+        if (charCode === 10 || (charCode >= 32 && charCode <= 126)) {
+          commands.push(charCode);
+        } else {
+          commands.push(63); // Print '?' for unknown/unsafe chars
+        }
       }
     };
 
@@ -312,7 +318,7 @@ class BluetoothPrinterService {
     }
 
     addLine('='.repeat(PRINTER_WIDTH));
-    setAlign('center');
+    setAlign('center'); // Use center align for footer
     addLine('Terima Kasih');
     addLine('Barang yg sudah dibeli');
     addLine('tidak dapat ditukar/dikembalikan');
@@ -331,7 +337,7 @@ class BluetoothPrinterService {
       const chunk = buffer.slice(i, i + chunkSize);
       await this.device.characteristic.writeValue(chunk);
       // Small delay to prevent buffer overflow
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
 
