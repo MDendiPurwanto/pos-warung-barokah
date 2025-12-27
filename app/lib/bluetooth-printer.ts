@@ -10,7 +10,7 @@ export interface PrinterDevice {
 export interface ReceiptData {
   storeName: string;
   storeAddress?: string;
-  headerNote?: string;
+  footerNote?: string;
   transactionId: string;
   date: Date | string;
   items: Array<{
@@ -271,9 +271,6 @@ class BluetoothPrinterService {
     if (data.storeAddress) {
       addCentered(data.storeAddress);
     }
-    if (data.headerNote) {
-      addCentered(data.headerNote);
-    }
     addLine('-'.repeat(PRINTER_WIDTH));
 
     setAlign('left');
@@ -319,6 +316,12 @@ class BluetoothPrinterService {
 
     addLine('='.repeat(PRINTER_WIDTH));
     setAlign('center'); // Use center align for footer
+
+    if (data.footerNote) {
+      addCentered(data.footerNote);
+      addLine();
+    }
+
     addLine('Terima Kasih');
     addLine('Barang yg sudah dibeli');
     addLine('tidak dapat ditukar/dikembalikan');

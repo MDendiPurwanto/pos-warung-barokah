@@ -247,7 +247,7 @@ export default function Sales() {
       const receiptData: ReceiptData = {
         storeName: 'TOKO BAROKAH',
         storeAddress: 'Jl. Gunung Galunggung, RT.02/RW.07, Blubuk, Blukbuk, Kec. Dukuhwaru, Kabupaten Tegal, Jawa Tengah 52451',
-        headerNote: 'sedia Wifi Voucheran, Transfer max 500k, bayar top up listrik dan Sembako',
+        footerNote: 'sedia Wifi Voucheran, Transfer max 500k, bayar top up listrik dan Sembako',
         transactionId: transaction.id,
         date: new Date().toLocaleString('id-ID', {
           day: '2-digit',
