@@ -28,18 +28,15 @@ Berikut adalah panduan singkat penggunaan aplikasi POS Warung Barokah beserta ta
 
 | Dashboard | Halaman Transaksi |
 |:---:|:---:|
-| *[Screenshot Dashboard]* | *[Screenshot Transaksi]* |
-| `![Dashboard](/screenshots/dashboard.png)` | `![Transaksi](/screenshots/transaksi.png)` |
+| ![Dashboard](public/screenshots/dashboard.png) | ![Transaksi](public/screenshots/transaksi.png) |
 
 | Manajemen Produk | Riwayat Penjualan |
 |:---:|:---:|
-| *[Screenshot Produk]* | *[Screenshot Riwayat]* |
-| `![Produk](/screenshots/products.png)` | `![Riwayat](/screenshots/history.png)` |
+| ![Produk](public/screenshots/products.png) | ![Riwayat](public/screenshots/history.png) |
 
 | Pengaturan Aplikasi | |
 |:---:|:---:|
-| *[Screenshot Settings]* | |
-| `![Settings](/screenshots/settings.png)` | |
+| ![Settings](public/screenshots/settings.png) | |
 
 ### Panduan Penggunaan
 
